@@ -241,7 +241,7 @@ const ASDRtps = () => {
           <DetailItem>
             <Hash size={16} />
             <strong>Registration ID:</strong> {service.specificService.block}/
-            {service.specificService.registrationType}/
+            {service.specificService.registrationType}/2025/
             {service.specificService.registrationNumber}
           </DetailItem>
         </DetailGrid>

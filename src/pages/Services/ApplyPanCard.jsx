@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
@@ -16,12 +17,19 @@ import {
 } from "lucide-react";
 
 import axiosInstance from "../../api/axiosInstance";
-import { Button, Input, Spinner, Toast } from "../../ui/UIComponents";
+import {
+  Button,
+  Input,
+  Spinner,
+  // Toast,
+  ToastNotification,
+} from "../../ui/UIComponents";
 
 const ApplyPanCard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef(null);
   const signatureInputRef = useRef(null);
+  const [showToast, setShowToast] = useState(true);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -57,12 +65,16 @@ const ApplyPanCard = () => {
       if (data.photo) formDataToSend.append("photo", data.photo);
       if (data.signature) formDataToSend.append("signature", data.signature);
 
-      const res = await axiosInstance.post("/services/apply/pan-card", formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axiosInstance.post(
+        "/services/apply/pan-card",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return res.data;
     },
     onSuccess: () => {
@@ -241,14 +253,17 @@ const ApplyPanCard = () => {
 
           <InputGroup>
             <Calendar size={20} color="var(--color-text-muted)" />
-            <Input
-              type="date"
-              name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              required
-              $hasIcon
-            />
+            <DateInputWrapper>
+              <Input
+                type="date"
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                required
+                placeholder="date of birth"
+                $hasIcon
+              />
+            </DateInputWrapper>
           </InputGroup>
 
           <InputGroup>
@@ -273,6 +288,7 @@ const ApplyPanCard = () => {
               value={formData.mobileNumber}
               onChange={handleChange}
               required
+              maxLength={10}
               $hasIcon
             />
           </InputGroup>
@@ -286,6 +302,7 @@ const ApplyPanCard = () => {
               value={formData.aadharNumber}
               onChange={handleChange}
               required
+              maxLength={12}
               $hasIcon
             />
           </InputGroup>
@@ -297,7 +314,7 @@ const ApplyPanCard = () => {
             <Input
               type="text"
               name="address"
-              placeholder="Address"
+              placeholder="Block"
               value={formData.address}
               onChange={handleChange}
               required
@@ -377,7 +394,13 @@ const ApplyPanCard = () => {
         </Form>
       </FormWrapper>
 
-      {toast && <Toast type={toast.type}>{toast.message}</Toast>}
+      {toast && (
+        <ToastNotification
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </Container>
   );
 };
@@ -572,10 +595,12 @@ const InputGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  /* 
-  & > svg {
-    position: absolute;
-    left: 12px;
-    z-index: 10;
-  } */
+`;
+
+const DateInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
 `;

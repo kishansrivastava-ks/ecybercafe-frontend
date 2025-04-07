@@ -25,6 +25,17 @@ import ServiceDetailsJobCard from "../pages/Dashboard/ServiceDetailsJobCard";
 import ASDPan from "../pages/AdminDashboard/ASDPan";
 import ASDRtps from "../pages/AdminDashboard/ASDRtps";
 import ASDJobCard from "../pages/AdminDashboard/ASDJobCard";
+import About from "../pages/About";
+import Contact from "../pages/Contact";
+
+import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
+import Terms from "../pages/Legal/Terms";
+import CookiesPolicy from "../pages/Legal/CookiesPolicy";
+import Refunds from "../pages/Legal/Refunds";
+import ServicesByType from "../pages/AdminDashboard/ServicesByType";
+import ServicesPan from "../pages/AdminDashboard/ServicesPan";
+import ServicesJobCard from "../pages/AdminDashboard/ServicesJobCard";
+import ServicesRtps from "../pages/AdminDashboard/ServicesRtps";
 
 const AppRoutes = () => {
   return (
@@ -37,6 +48,13 @@ const AppRoutes = () => {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/services" element={<Services />} />
           <Route path="/apply/pan-card" element={<ApplyPanCard />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookies" element={<CookiesPolicy />} />
+          <Route path="/refunds" element={<Refunds />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
@@ -47,6 +65,7 @@ const AppRoutes = () => {
             <Route path="services/pan-card" element={<ApplyPanCard />} />
             <Route path="services/rtps" element={<ApplyRtps />} />
             <Route path="services/job-card" element={<ApplyJobCard />} />
+
             <Route
               path="services/pan/:serviceId"
               element={<ServiceDetailsPan />}
@@ -69,6 +88,10 @@ const AppRoutes = () => {
             <Route path="service/pan/:id" element={<ASDPan />} />
             <Route path="service/rtps/:id" element={<ASDRtps />} />
             <Route path="service/job-card/:id" element={<ASDJobCard />} />
+            <Route path="services" element={<ServicesByType />} />
+            <Route path="services/pan" element={<ServicesPan />} />
+            <Route path="services/job-card" element={<ServicesJobCard />} />
+            <Route path="services/rtps" element={<ServicesRtps />} />
           </Route>
         </Route>
 

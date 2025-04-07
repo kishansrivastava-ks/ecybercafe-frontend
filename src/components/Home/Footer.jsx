@@ -16,6 +16,7 @@ const Footer = () => {
     { title: "Privacy Policy", url: "/privacy" },
     { title: "Terms of Service", url: "/terms" },
     { title: "Cookies Policy", url: "/cookies" },
+    { title: "Refunds", url: "/refunds" },
   ];
 
   return (
@@ -68,11 +69,9 @@ const Footer = () => {
         <FooterColumn>
           <FooterColumnTitle>Contact Info</FooterColumnTitle>
           <ContactInfo>
-            <ContactDetail>
-              123 Innovation Street Tech City, State 12345
-            </ContactDetail>
-            <ContactDetail>support@digitalservices.gov</ContactDetail>
-            <ContactDetail>1800-XXX-XXXX</ContactDetail>
+            <ContactDetail>Gaya, Bihar </ContactDetail>
+            <ContactDetail>helpecybercafe@gmail.com</ContactDetail>
+            <ContactDetail>+91 7091361502</ContactDetail>
           </ContactInfo>
         </FooterColumn>
       </FooterContent>

@@ -20,6 +20,8 @@ const DashboardLayout = () => {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -178,7 +180,25 @@ const DashboardLayout = () => {
             </div>
             <HeaderActions>
               <ThemeToggle />
-              <UserCircle>{user?.name[0].toUpperCase()}</UserCircle>
+              <UserDropdownContainer>
+                <UserCircle
+                  onMouseEnter={() => setShowDropdown(true)}
+                  onMouseLeave={() => setShowDropdown(false)}
+                >
+                  {user?.name[0].toUpperCase()}
+                </UserCircle>
+                {showDropdown && (
+                  <DropdownMenu
+                    onMouseEnter={() => setShowDropdown(true)}
+                    onMouseLeave={() => setShowDropdown(false)}
+                  >
+                    <DropdownItem onClick={handleLogout}>
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </DropdownItem>
+                  </DropdownMenu>
+                )}
+              </UserDropdownContainer>{" "}
             </HeaderActions>
           </HeaderContent>
         </Header>
@@ -298,9 +318,9 @@ const DropdownContent = styled.div`
 `;
 
 const UserCircle = styled.div`
-  width: 50px;
-  height: 50px;
-  font-size: 1.8rem;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -515,5 +535,41 @@ const ContentWrapper = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
+  }
+`;
+
+const UserDropdownContainer = styled.div`
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 85%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 100;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+`;
+
+const DropdownItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--color-surface-secondary);
+  }
+
+  svg {
+    color: var(--color-text-secondary);
   }
 `;

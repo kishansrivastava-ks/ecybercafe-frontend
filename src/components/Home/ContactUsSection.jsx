@@ -50,7 +50,7 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Email</ContactTitle>
-                <ContactDetail>support@digitalservices.gov</ContactDetail>
+                <ContactDetail>helpecybercafe@gmail.com</ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
 
@@ -60,7 +60,7 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Phone</ContactTitle>
-                <ContactDetail>1800-XXX-XXXX</ContactDetail>
+                <ContactDetail>+91 7091361502</ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
 
@@ -70,10 +70,7 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Address</ContactTitle>
-                <ContactDetail>
-                  Digital Services Headquarters 123 Innovation Street Tech City,
-                  State 12345
-                </ContactDetail>
+                <ContactDetail>Gaya, Bihar</ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
           </ContactInfoColumn>

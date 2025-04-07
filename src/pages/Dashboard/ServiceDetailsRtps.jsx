@@ -12,6 +12,7 @@ import {
   FileCode,
   Clock,
   MessageCircle,
+  Hash,
 } from "lucide-react";
 
 import axiosInstance from "../../api/axiosInstance";
@@ -120,6 +121,14 @@ const ServiceDetailsRtps = () => {
           <DetailItem>
             <Label>Block</Label>
             <Value>{specificService.block}</Value>
+          </DetailItem>
+          <DetailItem>
+            <Label>Registration ID:</Label>
+            <Value>
+              {service.specificService.block}/
+              {service.specificService.registrationType}/2025/
+              {service.specificService.registrationNumber}
+            </Value>
           </DetailItem>
         </ServiceDetailsSection>
 

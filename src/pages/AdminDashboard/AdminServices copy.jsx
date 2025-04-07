@@ -3,26 +3,10 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 import { Eye, CheckCircle, Clock, XCircle } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
-import { useState } from "react";
 
 const AdminServices = () => {
   const { services, isLoading, error } = useOutletContext();
   const navigate = useNavigate();
-  const [selectedServiceType, setSelectedServiceType] = useState("All");
-  const [selectedStatus, setSelectedStatus] = useState("All");
-
-  // Filter services based on selected filters
-  const filteredServices =
-    !isLoading && !error && services
-      ? services.filter((service) => {
-          const matchesServiceType =
-            selectedServiceType === "All" ||
-            service.serviceType === selectedServiceType;
-          const matchesStatus =
-            selectedStatus === "All" || service.status === selectedStatus;
-          return matchesServiceType && matchesStatus;
-        })
-      : [];
 
   const handleServiceClick = async (serviceId) => {
     const { data } = await axiosInstance.get(`/admin/service/${serviceId}`);
@@ -48,36 +32,6 @@ const AdminServices = () => {
         <ServiceCount>{services?.length || 0} Total Services</ServiceCount>
       </HeaderContainer>
 
-      <FiltersWrapper>
-        <FilterGroup>
-          <label htmlFor="serviceType">Service Type:</label>
-          <select
-            id="serviceType"
-            value={selectedServiceType}
-            onChange={(e) => setSelectedServiceType(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="PanCard">PanCard</option>
-            <option value="RTPS">RTPS</option>
-            <option value="JobCard">JobCard</option>
-          </select>
-        </FilterGroup>
-
-        <FilterGroup>
-          <label htmlFor="status">Status:</label>
-          <select
-            id="status"
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
-            <option value="in_progress">In Progress</option>
-          </select>
-        </FilterGroup>
-      </FiltersWrapper>
-
       {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
       {error && <ErrorMessage>Error fetching services</ErrorMessage>}
 
@@ -100,7 +54,7 @@ const AdminServices = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredServices.map((service) => (
+              {services.map((service) => (
                 <ServiceRow
                   key={service._id}
                   whileHover={{
@@ -364,33 +318,5 @@ const ActionLink = styled(Link)`
 
   @media (max-width: 767px) {
     font-size: 0.875rem;
-  }
-`;
-
-const FiltersWrapper = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  @media (max-width: 767px) {
-    flex-direction: column;
-  }
-
-  select {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border-light);
-    border-radius: 8px;
-    font-size: 0.875rem;
-  }
-`;
-
-const FilterGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-
-  label {
-    font-size: 0.75rem;
-    color: var(--color-text-secondary);
   }
 `;

@@ -8,6 +8,7 @@ import {
   HelpCircle,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -19,6 +20,7 @@ import useAuth from "../contexts/useAuth";
 const AdminDashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,7 +85,10 @@ const AdminDashboardLayout = () => {
             <Home size={20} />
             <span>Dashboard</span>
           </NavItem>
-          <NavItem to="/admin/services" onClick={closeSidebarOnMobile}>
+          <NavItem
+            to="/admin-dashboard/services"
+            onClick={closeSidebarOnMobile}
+          >
             <Layers size={20} />
             <span>Services</span>
           </NavItem>
@@ -118,9 +123,25 @@ const AdminDashboardLayout = () => {
             <ThemeToggle />
           </div>
 
-          <UserProfile>
-            <UserInitials>{user?.name[0].toUpperCase()}</UserInitials>
-          </UserProfile>
+          <UserDropdownContainer>
+            <UserInitials
+              onMouseEnter={() => setShowDropdown(true)}
+              onMouseLeave={() => setShowDropdown(false)}
+            >
+              {user?.name[0].toUpperCase()}
+            </UserInitials>
+            {showDropdown && (
+              <DropdownMenu
+                onMouseEnter={() => setShowDropdown(true)}
+                onMouseLeave={() => setShowDropdown(false)}
+              >
+                <DropdownItem onClick={handleLogout}>
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </DropdownItem>
+              </DropdownMenu>
+            )}
+          </UserDropdownContainer>
         </Header>
 
         <OutletWrapper>
@@ -371,5 +392,40 @@ const LogoutButton = styled.button`
 
   &:hover {
     background-color: var(--color-border-light);
+  }
+`;
+const UserDropdownContainer = styled.div`
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 85%;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 100;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+`;
+
+const DropdownItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--color-surface-secondary);
+  }
+
+  svg {
+    color: var(--color-text-secondary);
   }
 `;

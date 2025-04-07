@@ -34,7 +34,11 @@ const Navbar = () => {
         {user ? (
           <>
             <Animated animation="slideDown" delay={0.3}>
-              <StyledLink to="/dashboard">Dashboard</StyledLink>
+              <StyledLink
+                to={user?.role === "admin" ? "/admin-dashboard" : "dashboard"}
+              >
+                Dashboard
+              </StyledLink>
             </Animated>
             <Animated animation="slideDown" delay={0.4}>
               <StyledLink onClick={logout}>Logout</StyledLink>

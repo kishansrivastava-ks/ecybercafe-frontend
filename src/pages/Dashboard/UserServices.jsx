@@ -4,6 +4,7 @@ import axiosInstance from "../../api/axiosInstance";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { useState } from "react";
 
 const fetchUserServices = async () => {
   const res = await axiosInstance.get("/services/my-services");
@@ -16,7 +17,9 @@ const UserServices = () => {
     queryFn: fetchUserServices,
   });
 
-  // console.log(data);
+  const [selectedServiceType, setSelectedServiceType] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+
   const navigate = useNavigate();
 
   const fetchServiceDetails = async (serviceId) => {
@@ -32,6 +35,19 @@ const UserServices = () => {
     }
   };
 
+  // Filter services based on selected filters
+  const filteredServices =
+    !isLoading && !error && data
+      ? data.filter((service) => {
+          const matchesServiceType =
+            selectedServiceType === "All" ||
+            service.serviceType === selectedServiceType;
+          const matchesStatus =
+            selectedStatus === "All" || service.status === selectedStatus;
+          return matchesServiceType && matchesStatus;
+        })
+      : [];
+
   return (
     <Container
       initial={{ opacity: 0, y: 20 }}
@@ -40,16 +56,80 @@ const UserServices = () => {
     >
       <Title>My Services</Title>
 
+      <FiltersContainer>
+        <FilterGroup>
+          <FilterLabel>Service Type</FilterLabel>
+          <FilterTabs>
+            <FilterTab
+              active={selectedServiceType === "All"}
+              onClick={() => setSelectedServiceType("All")}
+            >
+              All
+            </FilterTab>
+            <FilterTab
+              active={selectedServiceType === "PanCard"}
+              onClick={() => setSelectedServiceType("PanCard")}
+            >
+              PanCard
+            </FilterTab>
+            <FilterTab
+              active={selectedServiceType === "RTPS"}
+              onClick={() => setSelectedServiceType("RTPS")}
+            >
+              RTPS
+            </FilterTab>
+            <FilterTab
+              active={selectedServiceType === "JobCard"}
+              onClick={() => setSelectedServiceType("JobCard")}
+            >
+              JobCard
+            </FilterTab>
+          </FilterTabs>
+        </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Status</FilterLabel>
+          <FilterTabs>
+            <FilterTab
+              active={selectedStatus === "All"}
+              onClick={() => setSelectedStatus("All")}
+            >
+              All
+            </FilterTab>
+            <FilterTab
+              active={selectedStatus === "completed"}
+              onClick={() => setSelectedStatus("completed")}
+            >
+              Completed
+            </FilterTab>
+            <FilterTab
+              active={selectedStatus === "pending"}
+              onClick={() => setSelectedStatus("pending")}
+            >
+              Pending
+            </FilterTab>
+            <FilterTab
+              active={selectedStatus === "in_progress"}
+              onClick={() => setSelectedStatus("in_progress")}
+            >
+              In Progress
+            </FilterTab>
+          </FilterTabs>
+        </FilterGroup>
+      </FiltersContainer>
+
       {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
       {error && <ErrorMessage>Error fetching services</ErrorMessage>}
 
-      {!isLoading && !error && data?.length === 0 && (
-        <EmptyState>No services applied yet.</EmptyState>
+      {!isLoading && !error && filteredServices.length === 0 && (
+        <EmptyState>
+          No services found matching the selected filters.
+        </EmptyState>
       )}
 
-      {!isLoading && !error && data?.length > 0 && (
+      {!isLoading && !error && filteredServices.length > 0 && (
         <ServiceGrid>
-          {data.map((service) => (
+          {filteredServices.map((service) => (
             <ServiceCard
               key={service._id}
               whileHover={{
@@ -57,7 +137,6 @@ const UserServices = () => {
                 boxShadow: "0 8px 15px rgba(0,0,0,0.1)",
               }}
               whileTap={{ scale: 0.98 }}
-              // onClick={() => navigate(`/dashboard/services/${service._id}`)}
               onClick={() => fetchServiceDetails(service._id)}
               style={{ cursor: "pointer" }}
             >
@@ -69,9 +148,9 @@ const UserServices = () => {
                 </StatusBadge>
               </ServiceHeader>
               <div style={{ marginBottom: "1rem" }}>
-                <div>Name :{service.specificService.fullName}</div>
+                <div>Name: {service.specificService.fullName}</div>
                 <div>
-                  Applied on :{" "}
+                  Applied on:{" "}
                   {format(new Date(service.createdAt), "dd MMM yyyy, HH:mm a")}
                 </div>
               </div>
@@ -102,7 +181,6 @@ export default UserServices;
 // Styled Components
 const Container = styled(motion.div)`
   padding: 2rem;
-  /* max-width: 800px; */
   margin: 0 auto;
   background-color: var(--color-bg);
 `;
@@ -113,6 +191,51 @@ const Title = styled.h2`
   text-align: center;
   margin-bottom: 1.5rem;
   font-weight: 600;
+`;
+
+const FiltersContainer = styled.div`
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const FilterLabel = styled.h3`
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+`;
+
+const FilterTabs = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`;
+
+const FilterTab = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: ${(props) =>
+    props.active ? "var(--color-primary)" : "var(--color-surface)"};
+  color: ${(props) => (props.active ? "white" : "var(--color-text)")};
+  border: 1px solid
+    ${(props) =>
+      props.active ? "var(--color-primary)" : "var(--color-border-light)"};
+
+  &:hover {
+    background-color: ${(props) =>
+      props.active ? "var(--color-primary)" : "var(--color-surface-secondary)"};
+  }
 `;
 
 const LoadingMessage = styled.p`
@@ -173,12 +296,12 @@ const StatusBadge = styled.span`
   font-weight: 500;
   text-transform: uppercase;
   background-color: ${(props) =>
-    props.status === "Approved"
+    props.status === "completed"
       ? "var(--color-success)"
-      : props.status === "Pending"
+      : props.status === "pending"
       ? "var(--color-warning)"
-      : props.status === "Rejected"
-      ? "var(--color-error)"
+      : props.status === "in_progress"
+      ? "var(--color-primary)"
       : "var(--color-primary)"};
   color: white;
 `;

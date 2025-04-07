@@ -104,19 +104,19 @@ const Button = styled.button`
     }
   }};
 
-  border: 2px solid
+  /* border: 2px solid
     ${({ variant }) => {
-      switch (variant) {
-        case "primary":
-          return theme.colors.primary;
-        case "secondary":
-          return theme.colors.secondary;
-        case "outline":
-          return theme.colors.primary;
-        default:
-          return theme.colors.border;
-      }
-    }};
+    switch (variant) {
+      case "primary":
+        return theme.colors.primary;
+      case "secondary":
+        return theme.colors.secondary;
+      case "outline":
+        return theme.colors.primary;
+      default:
+        return theme.colors.border;
+    }
+  }}; */
 
   &:hover {
     opacity: 0.9;
@@ -140,6 +140,34 @@ const Spinner = styled.div`
   animation: ${spinAnimation} 1s linear infinite;
 `;
 
+// const Toast = styled.div`
+//   position: fixed;
+//   top: ${theme.spacing.md};
+//   right: ${theme.spacing.md};
+//   z-index: 1000;
+//   display: flex;
+//   align-items: center;
+//   padding: ${theme.spacing.sm} ${theme.spacing.md};
+//   border-radius: ${theme.borderRadius.md};
+//   color: ${theme.colors.surface};
+//   animation: ${fadeInAnimation} 0.3s ease-out;
+//   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+//   background-color: ${({ type }) => {
+//     switch (type) {
+//       case "success":
+//         return theme.colors.success;
+//       case "error":
+//         return theme.colors.error;
+//       case "warning":
+//         return theme.colors.warning;
+//       case "info":
+//         return theme.colors.info;
+//       default:
+//         return theme.colors.text;
+//     }
+//   }};
+// `;
 const Toast = styled.div`
   position: fixed;
   top: ${theme.spacing.md};
@@ -147,12 +175,14 @@ const Toast = styled.div`
   z-index: 1000;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: ${theme.spacing.sm};
+  min-width: 250px;
   padding: ${theme.spacing.sm} ${theme.spacing.md};
   border-radius: ${theme.borderRadius.md};
   color: ${theme.colors.surface};
   animation: ${fadeInAnimation} 0.3s ease-out;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
   background-color: ${({ type }) => {
     switch (type) {
       case "success":
@@ -168,6 +198,25 @@ const Toast = styled.div`
     }
   }};
 `;
+const CloseButton = styled.div`
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  line-height: 1;
+`;
+
+const ToastNotification = ({ message, type = "info", onClose }) => {
+  return (
+    <Toast type={type}>
+      <span>{message}</span>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
+    </Toast>
+  );
+};
 
 const Input = styled.input`
   width: 100%;
@@ -227,4 +276,12 @@ const CyberCafeButton = () => {
   );
 };
 
-export { Button, Spinner, Toast, Input, CyberCafeButton, theme };
+export {
+  Button,
+  Spinner,
+  ToastNotification,
+  Toast,
+  Input,
+  CyberCafeButton,
+  theme,
+};

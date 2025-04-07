@@ -83,15 +83,15 @@ const ApplyRtps = () => {
     }
 
     // Registration number validation
-    const regNumberRegex = /^BR-\d{9}$/;
-    if (!regNumberRegex.test(registrationNumber)) {
-      setToast({
-        type: "error",
-        message:
-          "Invalid Registration Number format. It should be like BR-123456789",
-      });
-      return;
-    }
+    // const regNumberRegex = /^BR-\d{9}$/;
+    // if (!regNumberRegex.test(registrationNumber)) {
+    //   setToast({
+    //     type: "error",
+    //     message:
+    //       "Invalid Registration Number format. It should be like BR-123456789",
+    //   });
+    //   return;
+    // }
 
     // Submit the form
     mutation.mutate(formData);
@@ -152,7 +152,7 @@ const ApplyRtps = () => {
             <Input
               type="text"
               name="registrationNumber"
-              placeholder="Registration Number (e.g. BR-123456789)"
+              placeholder="Registration Number"
               value={formData.registrationNumber}
               onChange={handleChange}
               required

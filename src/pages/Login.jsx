@@ -39,7 +39,9 @@ const Login = () => {
       // Redirect based on user role
       setTimeout(() => {
         navigate(
-          data.user.role === "admin" ? "/admin-dashboard" : "/dashboard"
+          data.user.role === "admin"
+            ? "/admin-dashboard"
+            : "/dashboard/services"
         );
       }, 1500);
     } catch (err) {
@@ -285,7 +287,7 @@ const EmailIcon = styled.span`
   color: #9ca3af;
 `;
 
-const PasswordToggle = styled.button`
+const PasswordToggle = styled.div`
   position: absolute;
   right: 1rem;
   top: 50%;
