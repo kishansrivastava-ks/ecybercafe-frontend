@@ -36,6 +36,8 @@ import ServicesByType from "../pages/AdminDashboard/ServicesByType";
 import ServicesPan from "../pages/AdminDashboard/ServicesPan";
 import ServicesJobCard from "../pages/AdminDashboard/ServicesJobCard";
 import ServicesRtps from "../pages/AdminDashboard/ServicesRtps";
+import DocumentUpload from "../test/DocumentUpload";
+import DocumentTester from "../test/DocumentTester";
 
 const AppRoutes = () => {
   return (
@@ -50,6 +52,7 @@ const AppRoutes = () => {
           <Route path="/apply/pan-card" element={<ApplyPanCard />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/document-tester" element={<DocumentTester />} />
 
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />

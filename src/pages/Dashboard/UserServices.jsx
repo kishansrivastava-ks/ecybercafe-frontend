@@ -148,6 +148,7 @@ const UserServices = () => {
                 </StatusBadge>
               </ServiceHeader>
               <div style={{ marginBottom: "1rem" }}>
+                {console.log(service)}
                 <div>Name: {service.specificService.fullName}</div>
                 <div>
                   Applied on:{" "}

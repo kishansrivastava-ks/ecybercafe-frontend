@@ -13,6 +13,7 @@ import {
   Calendar,
   IdCard,
   MapPin,
+  CreditCard,
 } from "lucide-react";
 import { Upload, File } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
@@ -38,6 +39,8 @@ const ASDPan = () => {
       return data;
     },
   });
+
+  console.log(service);
 
   // Update Status Mutation
   const updateStatusMutation = useMutation({
@@ -96,14 +99,37 @@ const ASDPan = () => {
     }
   };
 
-  const handleDownload = (filePath, fileName) => {
-    const fullUrl = `${import.meta.env.VITE_API_BASE_URL}${filePath}`;
-    const link = document.createElement("a");
-    link.href = fullUrl;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  // const handleDownload = (filePath, fileName) => {
+  //   const fullUrl = `${import.meta.env.VITE_API_BASE_URL}${filePath}`;
+  //   const link = document.createElement("a");
+  //   link.href = fullUrl;
+  //   link.setAttribute("download", fileName);
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
+  const downloadDocument = async (documentPath, documentName) => {
+    try {
+      const response = await axiosInstance.get(documentPath, {
+        responseType: "blob",
+      });
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", documentName);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
   };
 
   if (isLoading)
@@ -211,8 +237,10 @@ const ASDPan = () => {
             />
             <DownloadButton
               onClick={() =>
-                handleDownload(
-                  service.specificService.photoPath,
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.photoPath
+                  }`,
                   "profile_photo.jpg"
                 )
               }
@@ -230,8 +258,10 @@ const ASDPan = () => {
             />
             <DownloadButton
               onClick={() =>
-                handleDownload(
-                  service.specificService.signaturePath,
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.signaturePath
+                  }`,
                   "signature.jpg"
                 )
               }
@@ -239,11 +269,47 @@ const ASDPan = () => {
               Download
             </DownloadButton>
           </DocumentItem>
+          <DocumentItem>
+            <DocumentLabel>Aadhar</DocumentLabel>
+            <DocumentPreviewWrapper>
+              {service.specificService.aadharFilePath &&
+              service.specificService.aadharFilePath.endsWith(".pdf") ? (
+                <PDFPlaceholder>
+                  <CreditCard size={40} />
+                  <span>Aadhar PDF Document</span>
+                </PDFPlaceholder>
+              ) : (
+                <DocumentPreview
+                  src={`${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.aadharFilePath
+                  }`}
+                  alt="Aadhar Document"
+                />
+              )}
+            </DocumentPreviewWrapper>
+            <DownloadButton
+              onClick={() =>
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.aadharFilePath
+                  }`,
+                  "aadhar_document.pdf"
+                )
+              }
+            >
+              Download Aadhar Document
+            </DownloadButton>
+          </DocumentItem>{" "}
         </DocumentGrid>
       </DocumentSection>
 
       {/* Add this after the DocumentSection */}
       <DocumentUploadSection>
+        {service.documents.length === 0 ? (
+          <div>No documents have been uploaded by you</div>
+        ) : (
+          <div>new document</div>
+        )}
         <SectionTitle>
           <Upload size={20} />
           Upload Additional Document
@@ -421,10 +487,12 @@ const DownloadButton = styled.a`
   border-radius: 5px;
   text-align: center;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    /* background-color: #0056b3; */
+    color: white;
+    transform: scale(1.05);
   }
 `;
 const DocumentLabel = styled.div`
@@ -782,6 +850,34 @@ const ConfirmButton = styled.button`
     background-color: #cccccc;
     cursor: not-allowed;
   }
+`;
+const DocumentPreviewWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+`;
+const DocumentPreview = styled.img`
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+const PDFPlaceholder = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  background-color: var(--color-bg);
+  border-radius: 8px;
+  border: 1px dashed var(--color-border-light);
+  color: var(--color-text-muted);
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
 `;
 
 export default ASDPan;

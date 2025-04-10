@@ -12,13 +12,14 @@ import {
   CreditCard,
   Clock,
   MessageCircle,
+  File,
 } from "lucide-react";
 
 import axiosInstance from "../../api/axiosInstance";
 
 const fetchServiceDetails = async (serviceId) => {
   const res = await axiosInstance.get(`/admin/service/${serviceId}`);
-  console.log(res.data);
+  // console.log(res.data);
   return res.data;
 };
 const ServiceDetailsPan = () => {
@@ -47,19 +48,43 @@ const ServiceDetailsPan = () => {
 
   const { specificService, comments } = service;
 
-  const downloadDocument = async (documentId) => {
+  // const downloadDocument = async (documentId) => {
+  //   try {
+  //     const response = await axiosInstance.get(
+  //       `/services/${serviceId}/documents/${documentId}/download`,
+  //       { responseType: "blob" }
+  //     );
+
+  //     // Create a blob URL and trigger download
+  //     const blob = new Blob([response.data]);
+  //     const url = window.URL.createObjectURL(blob);
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `document_${documentId}`);
+  //     document.body.appendChild(link);
+  //     link.click();
+
+  //     // Clean up
+  //     link.parentNode.removeChild(link);
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     // Optionally show an error toast or message
+  //   }
+  // };
+
+  const downloadDocument = async (documentPath, documentName) => {
     try {
-      const response = await axiosInstance.get(
-        `/services/${serviceId}/documents/${documentId}/download`,
-        { responseType: "blob" }
-      );
+      const response = await axiosInstance.get(documentPath, {
+        responseType: "blob",
+      });
 
       // Create a blob URL and trigger download
       const blob = new Blob([response.data]);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `document_${documentId}`);
+      link.setAttribute("download", documentName);
       document.body.appendChild(link);
       link.click();
 
@@ -71,6 +96,8 @@ const ServiceDetailsPan = () => {
       // Optionally show an error toast or message
     }
   };
+
+  console.log(specificService);
 
   return (
     <Container
@@ -159,7 +186,7 @@ const ServiceDetailsPan = () => {
                 }`}
                 alt="Uploaded Photo"
               />
-              {console.log(specificService.photoPath)}
+              {/* {console.log(specificService.photoPath)} */}
             </DocumentItem>
             <DocumentItem>
               <DocumentLabel>Signature</DocumentLabel>
@@ -173,12 +200,50 @@ const ServiceDetailsPan = () => {
           </DocumentGrid>
         </DocumentSection>
 
+        <ServiceDetailsSection>
+          <SectionTitle>
+            <File size={20} />
+            Required Documents
+          </SectionTitle>
+          <DocumentItem>
+            <DocumentLabel>Aadhar</DocumentLabel>
+            <DocumentPreviewWrapper>
+              {specificService.aadharFilePath &&
+              specificService.aadharFilePath.endsWith(".pdf") ? (
+                <PDFPlaceholder>
+                  <CreditCard size={40} />
+                  <span>Aadhar PDF Document</span>
+                </PDFPlaceholder>
+              ) : (
+                <DocumentPreview
+                  src={`${import.meta.env.VITE_API_BASE_URL}${
+                    specificService.aadharFilePath
+                  }`}
+                  alt="Aadhar Document"
+                />
+              )}
+            </DocumentPreviewWrapper>
+            <DownloadButton
+              onClick={() =>
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    specificService.aadharFilePath
+                  }`,
+                  "aadhar_document.pdf"
+                )
+              }
+            >
+              Download Aadhar Document
+            </DownloadButton>
+          </DocumentItem>
+        </ServiceDetailsSection>
+
         <DocumentSection>
           <SectionTitle>
             <FileText size={20} />
             Uploaded Documents
           </SectionTitle>
-          {console.log(service.documents)}
+          {/* {console.log(service.documents)} */}
           {service.documents && service.documents.length > 0 ? (
             <DocumentGrid>
               {service.documents.map((doc) => (
@@ -415,4 +480,26 @@ const NoDocumentsMessage = styled.p`
   font-style: italic;
   text-align: center;
   padding: 20px;
+`;
+
+const DocumentPreviewWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+`;
+const PDFPlaceholder = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  background-color: var(--color-bg);
+  border-radius: 8px;
+  border: 1px dashed var(--color-border-light);
+  color: var(--color-text-muted);
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
 `;

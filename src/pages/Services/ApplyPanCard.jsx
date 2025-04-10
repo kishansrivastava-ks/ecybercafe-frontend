@@ -29,6 +29,7 @@ const ApplyPanCard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef(null);
   const signatureInputRef = useRef(null);
+  const [aadharInputRef, setAadharInputRef] = useState(null);
   const [showToast, setShowToast] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -40,11 +41,16 @@ const ApplyPanCard = () => {
     address: "",
     photo: null,
     signature: null,
+    aadharFile: null,
   });
 
   const [previews, setPreviews] = useState({
     photo: null,
     signature: null,
+  });
+
+  const [fileInfo, setFileInfo] = useState({
+    aadharFile: null,
   });
 
   const [toast, setToast] = useState(null);
@@ -56,7 +62,7 @@ const ApplyPanCard = () => {
 
       // Append text fields
       Object.keys(data).forEach((key) => {
-        if (key !== "photo" && key !== "signature") {
+        if (key !== "photo" && key !== "signature" && key !== "aadharFile") {
           formDataToSend.append(key, data[key]);
         }
       });
@@ -64,6 +70,7 @@ const ApplyPanCard = () => {
       // Append files
       if (data.photo) formDataToSend.append("photo", data.photo);
       if (data.signature) formDataToSend.append("signature", data.signature);
+      if (data.aadharFile) formDataToSend.append("aadharFile", data.aadharFile);
 
       const res = await axiosInstance.post(
         "/services/apply/pan-card",
@@ -105,13 +112,18 @@ const ApplyPanCard = () => {
     const { name, files } = e.target;
     if (files[0]) {
       // Validate file type and size
-      const allowedTypes = ["image/jpeg", "image/png"];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "application/pdf",
+        "image/jpg",
+      ];
       const maxSize = 5 * 1024 * 1024; // 5MB
 
       if (!allowedTypes.includes(files[0].type)) {
         setToast({
           type: "error",
-          message: "Only JPEG and PNG files are allowed",
+          message: "Only JPEG, JPG, PNG and PDF files are allowed",
         });
         return;
       }
@@ -134,12 +146,27 @@ const ApplyPanCard = () => {
       };
       reader.readAsDataURL(files[0]);
 
+      setFileInfo((prev) => ({
+        ...prev,
+        [name]: {
+          name: files[0].name,
+          size: formatFileSize(files[0].size),
+          type: files[0].type,
+        },
+      }));
+
       // Store file in state
       setFormData((prev) => ({
         ...prev,
         [name]: files[0],
       }));
     }
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + " bytes";
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+    else return (bytes / 1048576).toFixed(1) + " MB";
   };
 
   const removeFile = (type) => {
@@ -159,6 +186,9 @@ const ApplyPanCard = () => {
     if (type === "signature" && signatureInputRef.current) {
       signatureInputRef.current.value = "";
     }
+    if (type === "aadharFile" && aadharInputRef) {
+      aadharInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = (e) => {
@@ -174,6 +204,7 @@ const ApplyPanCard = () => {
       address,
       photo,
       signature,
+      aadharFile,
     } = formData;
 
     // Comprehensive validation
@@ -186,6 +217,7 @@ const ApplyPanCard = () => {
       { field: address, message: "Address is required" },
       { field: photo, message: "Photo is required" },
       { field: signature, message: "Signature is required" },
+      { field: aadharFile, message: "Aadhar File is required" },
     ];
 
     const failedValidation = validations.find(
@@ -222,6 +254,18 @@ const ApplyPanCard = () => {
 
     // Submit the form
     mutation.mutate(formData);
+  };
+
+  const getFileIcon = (fileType) => {
+    if (!fileType) return <File size={24} />;
+
+    if (fileType.includes("pdf")) {
+      return <FileText size={24} color="#E74C3C" />;
+    } else if (fileType.includes("image")) {
+      return <File size={24} color="#3498DB" />;
+    } else {
+      return <File size={24} />;
+    }
   };
 
   return (
@@ -381,6 +425,40 @@ const ApplyPanCard = () => {
                 </PreviewContainer>
               )}
             </FileUploadGroup>
+
+            <FileUploadGroup>
+              <FileUploadLabel>Upload Aadhar Document</FileUploadLabel>
+              <FileUploadWrapper>
+                <HiddenFileInput
+                  type="file"
+                  name="aadharFile"
+                  ref={aadharInputRef}
+                  accept=".jpg,.jpeg,.png,.pdf"
+                  onChange={handleFileChange}
+                />
+                <FileUploadButton
+                  type="button"
+                  onClick={() => aadharInputRef.current.click()}
+                >
+                  <Upload size={20} />
+                  <span>Upload Aadhar</span>
+                </FileUploadButton>
+              </FileUploadWrapper>
+              {fileInfo.aadharFile && (
+                <FilePreviewContainer>
+                  <FileIconSection>
+                    {getFileIcon(fileInfo.aadharFile.type)}
+                  </FileIconSection>
+                  <FileInfoSection>
+                    <FileName>{fileInfo.aadharFile.name}</FileName>
+                    <FileSize>{fileInfo.aadharFile.size}</FileSize>
+                  </FileInfoSection>
+                  <RemoveButton onClick={() => removeFile("aadharFile")}>
+                    <X size={16} />
+                  </RemoveButton>
+                </FilePreviewContainer>
+              )}
+            </FileUploadGroup>
           </FileUploadSection>
 
           <Button
@@ -462,6 +540,48 @@ const FileUploadButton = styled.button`
     padding: 0.6rem;
     font-size: 0.9rem;
   }
+`;
+
+const FileIconSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-bg);
+  border-radius: 6px;
+`;
+
+const FilePreviewContainer = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--color-bg-muted);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  position: relative;
+`;
+const FileInfoSection = styled.div`
+  flex: 1;
+  margin-left: 0.75rem;
+  overflow: hidden;
+`;
+
+const FileName = styled.p`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const FileSize = styled.p`
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  margin-top: 0.25rem;
 `;
 
 const PreviewContainer = styled.div`

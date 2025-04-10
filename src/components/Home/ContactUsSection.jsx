@@ -70,7 +70,10 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Address</ContactTitle>
-                <ContactDetail>Gaya, Bihar</ContactDetail>
+                <ContactDetail>
+                  POST OFFICE AHIYAPUR, SH 69, Dakshin Bihar Gramin Bank, TEHSIL
+                  KONCH, Gangti, Gaya, Bihar, 824207
+                </ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
           </ContactInfoColumn>

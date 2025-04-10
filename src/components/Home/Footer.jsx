@@ -69,7 +69,10 @@ const Footer = () => {
         <FooterColumn>
           <FooterColumnTitle>Contact Info</FooterColumnTitle>
           <ContactInfo>
-            <ContactDetail>Gaya, Bihar </ContactDetail>
+            <ContactDetail>
+              POST OFFICE AHIYAPUR, SH 69, Dakshin Bihar Gramin Bank, TEHSIL
+              KONCH, Gangti, Gaya, Bihar, 824207{" "}
+            </ContactDetail>
             <ContactDetail>helpecybercafe@gmail.com</ContactDetail>
             <ContactDetail>+91 7091361502</ContactDetail>
           </ContactInfo>
