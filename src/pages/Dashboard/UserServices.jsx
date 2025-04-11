@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import axiosInstance from "../../api/axiosInstance";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
+import { errorToast, successToast } from "../../utils/ToastNotfications";
 
 const fetchUserServices = async () => {
   const res = await axiosInstance.get("/services/my-services");
@@ -16,6 +18,11 @@ const UserServices = () => {
     queryKey: ["userServices"],
     queryFn: fetchUserServices,
   });
+
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [showDeleteAllConfirmation, setShowDeleteAllConfirmation] =
+    useState(false);
+  const queryClient = useQueryClient();
 
   const [selectedServiceType, setSelectedServiceType] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -33,6 +40,61 @@ const UserServices = () => {
     } else if (serviceType === "JobCard") {
       navigate(`/dashboard/services/job-card/${serviceId}`);
     }
+  };
+
+  const deleteServiceMutation = useMutation({
+    mutationFn: async (serviceId) => {
+      return await axiosInstance.delete(`/services/${serviceId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userServices"]);
+      successToast("Service deleted successfully");
+    },
+    onError: () => {
+      errorToast("Failed to delete service");
+    },
+  });
+
+  const deleteAllServicesMutation = useMutation({
+    mutationFn: async () => {
+      return await axiosInstance.delete("/services/all");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["userServices"]);
+      successToast("All services deleted successfully");
+    },
+    onError: () => {
+      errorToast("Failed to delete services");
+    },
+  });
+
+  const handleDeleteClick = (e, serviceId) => {
+    e.stopPropagation();
+    setDeleteConfirmation(serviceId);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirmation) {
+      deleteServiceMutation.mutate(deleteConfirmation);
+      setDeleteConfirmation(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmation(null);
+  };
+
+  const handleDeleteAll = () => {
+    setShowDeleteAllConfirmation(true);
+  };
+
+  const confirmDeleteAll = () => {
+    deleteAllServicesMutation.mutate();
+    setShowDeleteAllConfirmation(false);
+  };
+
+  const cancelDeleteAll = () => {
+    setShowDeleteAllConfirmation(false);
   };
 
   // Filter services based on selected filters
@@ -55,7 +117,6 @@ const UserServices = () => {
       transition={{ duration: 0.4 }}
     >
       <Title>My Services</Title>
-
       <FiltersContainer>
         <FilterGroup>
           <FilterLabel>Service Type</FilterLabel>
@@ -117,16 +178,24 @@ const UserServices = () => {
           </FilterTabs>
         </FilterGroup>
       </FiltersContainer>
-
+      <DeleteAllContainer>
+        <DeleteAllButton
+          onClick={handleDeleteAll}
+          disabled={
+            isLoading || (filteredServices && filteredServices.length === 0)
+          }
+        >
+          Delete All Services
+          <Trash2 size={16} />
+        </DeleteAllButton>
+      </DeleteAllContainer>
       {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
       {error && <ErrorMessage>Error fetching services</ErrorMessage>}
-
       {!isLoading && !error && filteredServices.length === 0 && (
         <EmptyState>
           No services found matching the selected filters.
         </EmptyState>
       )}
-
       {!isLoading && !error && filteredServices.length > 0 && (
         <ServiceGrid>
           {filteredServices.map((service) => (
@@ -147,14 +216,22 @@ const UserServices = () => {
                   {service.status}
                 </StatusBadge>
               </ServiceHeader>
+
               <div style={{ marginBottom: "1rem" }}>
-                {console.log(service)}
                 <div>Name: {service.specificService.fullName}</div>
                 <div>
-                  Applied on:{" "}
+                  Applied on:
                   {format(new Date(service.createdAt), "dd MMM yyyy, HH:mm a")}
                 </div>
               </div>
+
+              <DeleteButton
+                onClick={(e) => handleDeleteClick(e, service._id)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Trash2 size={16} color="var(--color-error)" />
+              </DeleteButton>
 
               {service.comments.length > 0 && (
                 <CommentSection>
@@ -172,6 +249,48 @@ const UserServices = () => {
             </ServiceCard>
           ))}
         </ServiceGrid>
+      )}
+      {deleteConfirmation && (
+        <ConfirmationModal>
+          <ConfirmationContent>
+            <h3>Delete Service</h3>
+            <p>
+              Are you sure you want to delete this service? This action cannot
+              be undone.
+            </p>
+            <ConfirmationActions>
+              <CancelButton onClick={cancelDelete}>Cancel</CancelButton>
+              <DeleteConfirmButton
+                onClick={confirmDelete}
+                disabled={deleteServiceMutation.isLoading}
+              >
+                {deleteServiceMutation.isLoading ? "Deleting..." : "Delete"}
+              </DeleteConfirmButton>
+            </ConfirmationActions>
+          </ConfirmationContent>
+        </ConfirmationModal>
+      )}
+      {showDeleteAllConfirmation && (
+        <ConfirmationModal>
+          <ConfirmationContent>
+            <h3>Delete All Services</h3>
+            <p>
+              Are you sure you want to delete all your services? This action
+              cannot be undone.
+            </p>
+            <ConfirmationActions>
+              <CancelButton onClick={cancelDeleteAll}>Cancel</CancelButton>
+              <DeleteConfirmButton
+                onClick={confirmDeleteAll}
+                disabled={deleteAllServicesMutation.isLoading}
+              >
+                {deleteAllServicesMutation.isLoading
+                  ? "Deleting..."
+                  : "Delete All"}
+              </DeleteConfirmButton>
+            </ConfirmationActions>
+          </ConfirmationContent>
+        </ConfirmationModal>
       )}
     </Container>
   );
@@ -340,4 +459,121 @@ const CommentDate = styled.span`
   color: var(--color-text-muted);
   font-size: 0.75rem;
   font-style: italic;
+`;
+
+const DeleteButton = styled(motion.button)`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(255, 59, 48, 0.1);
+  }
+`;
+
+const ConfirmationModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ConfirmationContent = styled.div`
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+`;
+
+const ConfirmationActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+`;
+
+const CancelButton = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--color-surface-secondary);
+  }
+`;
+
+const DeleteConfirmButton = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  background-color: var(--color-error);
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d63031;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+`;
+
+const DeleteAllContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+`;
+
+const DeleteAllButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  background-color: var(--color-error);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #d63031;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;

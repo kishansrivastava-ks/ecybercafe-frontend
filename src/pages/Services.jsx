@@ -1,9 +1,22 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { FileText, ArrowRight, Briefcase, FileSignature } from "lucide-react";
+import {
+  FileText,
+  ArrowRight,
+  Briefcase,
+  FileSignature,
+  CreditCard,
+  Vote,
+  Share2,
+  Heart,
+  Printer,
+  FileSpreadsheet,
+  Image,
+  Layers,
+  BadgeCheck,
+} from "lucide-react";
 
 import useAuth from "../contexts/useAuth";
 import { Button, Spinner, Toast } from "../ui/UIComponents";
@@ -15,7 +28,82 @@ const Services = () => {
   const [loadingService, setLoadingService] = React.useState(null);
   const [toast, setToast] = React.useState(null);
 
-  const handleApply = async (servicePath) => {
+  const services = [
+    {
+      icon: CreditCard,
+      title: "Aadhar Card",
+      description: "Apply for or update your Aadhar identity card with ease.",
+      color: "#6366F1", // var(--color-primary)
+      path: "aadhar-card",
+    },
+    {
+      icon: Vote,
+      title: "Voter Card",
+      description: "Register for or modify your voter identification card.",
+      color: "#EC4899", // var(--color-secondary)
+      path: "voter-card",
+    },
+    {
+      icon: Share2,
+      title: "E Share Card",
+      description:
+        "Digital share certificates and electronic registration solutions.",
+      color: "#10B981", // var(--color-accent)
+      path: "e-share-card",
+    },
+    {
+      icon: Heart,
+      title: "Ayushman Card",
+      description: "Health insurance card for affordable medical care access.",
+      color: "#6366F1", // var(--color-primary)
+      path: "ayushman-card",
+    },
+    {
+      icon: FileText,
+      title: "Pan Card",
+      description: "Apply or update your Permanent Account Number easily.",
+      color: "#EC4899", // var(--color-secondary)
+      path: "pan-card",
+    },
+    {
+      icon: Printer,
+      title: "Pan Card PVC Print",
+      description: "Get your PAN card printed on durable PVC material.",
+      color: "#10B981", // var(--color-accent)
+      path: "pan-card-pvc",
+    },
+    {
+      icon: FileSpreadsheet,
+      title: "Computer Paper A4 Size",
+      description: "High-quality A4 size paper for all your printing needs.",
+      color: "#6366F1", // var(--color-primary)
+      path: "a4-paper",
+    },
+    {
+      icon: Image,
+      title: "4X6 Photo Paper",
+      description: "Professional photo paper for high-quality prints.",
+      color: "#EC4899", // var(--color-secondary)
+      path: "photo-paper",
+    },
+    {
+      icon: Layers,
+      title: "Laminate A4 Pouch",
+      description: "A4 size lamination pouches for document protection.",
+      color: "#10B981", // var(--color-accent)
+      path: "laminate-pouch",
+    },
+    {
+      icon: BadgeCheck,
+      title: "Laminated Pouch Aadhar Card",
+      description:
+        "Protect your Aadhar card with our special lamination service.",
+      color: "#6366F1", // var(--color-primary)
+      path: "laminated-aadhar",
+    },
+  ];
+
+  const handleBuy = async (servicePath) => {
     setIsLoading(true);
     setLoadingService(servicePath);
     try {
@@ -46,113 +134,40 @@ const Services = () => {
       <Title>Available Services</Title>
 
       <ServiceGrid>
-        {/* PAN Card Service */}
-        <ServiceCardWrapper
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <ServiceCard $color="#0077FF">
-            <IconWrapper $color="#0077FF">
-              <FileText size={48} color="#0077FF" />
-            </IconWrapper>
+        {services.map((service) => (
+          <ServiceCardWrapper
+            key={service.path}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <ServiceCard $color={service.color}>
+              <IconWrapper $color={service.color}>
+                <service.icon size={48} color={service.color} />
+              </IconWrapper>
 
-            <ServiceContent>
-              <ServiceTitle>PAN Card Application</ServiceTitle>
-              <ServiceDescription>
-                Apply for a new PAN card or update your existing details quickly
-                and securely.
-              </ServiceDescription>
+              <ServiceContent>
+                <ServiceTitle>{service.title}</ServiceTitle>
+                <ServiceDescription>{service.description}</ServiceDescription>
 
-              <Button
-                variant="primary"
-                onClick={() => handleApply("pan-card")}
-                disabled={isLoading}
-                style={{ backgroundColor: "#0077FF" }}
-              >
-                {isLoading && loadingService === "pan-card" ? (
-                  <Spinner size={20} />
-                ) : (
-                  <>
-                    Apply Now
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </Button>
-            </ServiceContent>
-          </ServiceCard>
-        </ServiceCardWrapper>
-
-        {/* Job Card Service */}
-        <ServiceCardWrapper
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <ServiceCard $color="#FF5722">
-            <IconWrapper $color="#FF5722">
-              <Briefcase size={48} color="#FF5722" />
-            </IconWrapper>
-
-            <ServiceContent>
-              <ServiceTitle>Job Card Application</ServiceTitle>
-              <ServiceDescription>
-                Apply for employment programs and register for job opportunities
-                in your area.
-              </ServiceDescription>
-
-              <Button
-                variant="primary"
-                onClick={() => handleApply("job-card")}
-                disabled={isLoading}
-                style={{ backgroundColor: "#FF5722" }}
-              >
-                {isLoading && loadingService === "job-card" ? (
-                  <Spinner size={20} />
-                ) : (
-                  <>
-                    Apply Now
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </Button>
-            </ServiceContent>
-          </ServiceCard>
-        </ServiceCardWrapper>
-
-        {/* RTPS Service */}
-        <ServiceCardWrapper
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <ServiceCard $color="#4CAF50">
-            <IconWrapper $color="#4CAF50">
-              <FileSignature size={48} color="#4CAF50" />
-            </IconWrapper>
-
-            <ServiceContent>
-              <ServiceTitle>RTPS Application</ServiceTitle>
-              <ServiceDescription>
-                Right to Public Service - Apply for government services with
-                guaranteed timely processing.
-              </ServiceDescription>
-
-              <Button
-                variant="primary"
-                onClick={() => handleApply("rtps")}
-                disabled={isLoading}
-                style={{ backgroundColor: "#4CAF50" }}
-              >
-                {isLoading && loadingService === "rtps" ? (
-                  <Spinner size={20} />
-                ) : (
-                  <>
-                    Apply Now
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </Button>
-            </ServiceContent>
-          </ServiceCard>
-        </ServiceCardWrapper>
+                <Button
+                  variant="primary"
+                  onClick={() => handleBuy(service.path)}
+                  disabled={isLoading}
+                  style={{ backgroundColor: service.color }}
+                >
+                  {isLoading && loadingService === service.path ? (
+                    <Spinner size={20} />
+                  ) : (
+                    <>
+                      Buy Now
+                      <ArrowRight size={18} />
+                    </>
+                  )}
+                </Button>
+              </ServiceContent>
+            </ServiceCard>
+          </ServiceCardWrapper>
+        ))}
       </ServiceGrid>
 
       {toast && <Toast type={toast.type}>{toast.message}</Toast>}
@@ -183,8 +198,8 @@ const Title = styled.h1`
 
 const ServiceGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
 `;
@@ -196,25 +211,34 @@ const ServiceCardWrapper = styled(motion.div)`
 
 const ServiceCard = styled.div`
   background: var(--color-surface);
-  /* border-radius: 16px; */
-  /* box-shadow: 0 10px 25px
-      ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`},
-    0 5px 15px ${(props) => `rgba(${getColorValues(props.$color)}, 0.05)`}; */
-
+  border-radius: 16px;
+  box-shadow: 0 8px 20px
+    ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  gap: 1.5rem;
-  /* border: 2px solid var(--color-border-light); */
+  padding: 1.75rem;
+  gap: 1.25rem;
   transition: all 0.3s ease;
   height: 100%;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 35px
         ${(props) => `rgba(${getColorValues(props.$color)}, 0.15)`},
       0 8px 20px ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background-color: ${(props) => props.$color};
   }
 `;
 
@@ -224,14 +248,14 @@ const IconWrapper = styled.div`
   justify-content: center;
   background-color: ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
   border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 0.25rem;
 `;
 
 const ServiceContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   text-align: center;
   width: 100%;
 `;
@@ -239,7 +263,7 @@ const ServiceContent = styled.div`
 const ServiceTitle = styled.h2`
   font-size: 1.5rem;
   color: var(--color-text);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 const ServiceDescription = styled.p`
@@ -247,6 +271,7 @@ const ServiceDescription = styled.p`
   margin-bottom: 1rem;
   line-height: 1.6;
   flex-grow: 1;
+  font-size: 0.95rem;
 `;
 
 // Helper function to convert hex color to RGB values
