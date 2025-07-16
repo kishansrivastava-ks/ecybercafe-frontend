@@ -1,22 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance from "../../../api/axiosInstance";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { errorToast, successToast } from "../../utils/ToastNotfications";
+import { errorToast, successToast } from "../../../utils/ToastNotfications";
 
-const fetchUserServices = async () => {
+const fetchRTPSServices = async () => {
   const res = await axiosInstance.get("/services/my-services");
-  return res.data;
+  // Filter only RTPS services
+  return res.data.filter((service) => service.serviceType === "RTPS");
 };
 
-const UserServices = () => {
+const RTPSServices = () => {
   const { data, error, isLoading } = useQuery({
-    queryKey: ["userServices"],
-    queryFn: fetchUserServices,
+    queryKey: ["rtpsServices"],
+    queryFn: fetchRTPSServices,
   });
 
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
@@ -24,22 +25,15 @@ const UserServices = () => {
     useState(false);
   const queryClient = useQueryClient();
 
-  const [selectedServiceType, setSelectedServiceType] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedBlock, setSelectedBlock] = useState("All");
+  const [selectedRegistrationType, setSelectedRegistrationType] =
+    useState("All");
 
   const navigate = useNavigate();
 
   const fetchServiceDetails = async (serviceId) => {
-    const res = await axiosInstance.get(`/admin/service/${serviceId}`);
-    console.log(res.data.serviceType);
-    const serviceType = res.data.serviceType;
-    if (serviceType === "PanCard") {
-      navigate(`/dashboard/services/pan/${serviceId}`);
-    } else if (serviceType === "RTPS") {
-      navigate(`/dashboard/services/rtps/${serviceId}`);
-    } else if (serviceType === "JobCard") {
-      navigate(`/dashboard/services/job-card/${serviceId}`);
-    }
+    navigate(`/dashboard/services/rtps/${serviceId}`);
   };
 
   const deleteServiceMutation = useMutation({
@@ -47,24 +41,29 @@ const UserServices = () => {
       return await axiosInstance.delete(`/services/${serviceId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["userServices"]);
-      successToast("Service deleted successfully");
+      queryClient.invalidateQueries(["rtpsServices"]);
+      successToast("RTPS service deleted successfully");
     },
     onError: () => {
-      errorToast("Failed to delete service");
+      errorToast("Failed to delete RTPS service");
     },
   });
 
   const deleteAllServicesMutation = useMutation({
     mutationFn: async () => {
-      return await axiosInstance.delete("/services/all");
+      // Get all RTPS service IDs and delete them
+      const rtpsServices = filteredServices || [];
+      const deletePromises = rtpsServices.map((service) =>
+        axiosInstance.delete(`/services/${service._id}`)
+      );
+      return await Promise.all(deletePromises);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["userServices"]);
-      successToast("All services deleted successfully");
+      queryClient.invalidateQueries(["rtpsServices"]);
+      successToast("All RTPS services deleted successfully");
     },
     onError: () => {
-      errorToast("Failed to delete services");
+      errorToast("Failed to delete RTPS services");
     },
   });
 
@@ -97,16 +96,39 @@ const UserServices = () => {
     setShowDeleteAllConfirmation(false);
   };
 
+  // Generate registration number from RTPS data
+  const generateRegistrationNumber = (service) => {
+    const rtpsData = service.specificService;
+    if (
+      rtpsData &&
+      rtpsData.block &&
+      rtpsData.registrationType &&
+      rtpsData.registrationNumber
+    ) {
+      return `${rtpsData.block}/${rtpsData.registrationType}/${rtpsData.registrationNumber}`;
+    }
+    return "N/A";
+  };
+
   // Filter services based on selected filters
   const filteredServices =
     !isLoading && !error && data
       ? data.filter((service) => {
-          const matchesServiceType =
-            selectedServiceType === "All" ||
-            service.serviceType === selectedServiceType;
+          const rtpsData = service.specificService;
+
           const matchesStatus =
             selectedStatus === "All" || service.status === selectedStatus;
-          return matchesServiceType && matchesStatus;
+
+          const matchesBlock =
+            selectedBlock === "All" ||
+            (rtpsData && rtpsData.block === selectedBlock);
+
+          const matchesRegistrationType =
+            selectedRegistrationType === "All" ||
+            (rtpsData &&
+              rtpsData.registrationType === selectedRegistrationType);
+
+          return matchesStatus && matchesBlock && matchesRegistrationType;
         })
       : [];
 
@@ -116,38 +138,9 @@ const UserServices = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Title>My Services</Title>
-      <FiltersContainer>
-        <FilterGroup>
-          <FilterLabel>Service Type</FilterLabel>
-          <FilterTabs>
-            <FilterTab
-              active={selectedServiceType === "All"}
-              onClick={() => setSelectedServiceType("All")}
-            >
-              All
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "PanCard"}
-              onClick={() => setSelectedServiceType("PanCard")}
-            >
-              PanCard
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "RTPS"}
-              onClick={() => setSelectedServiceType("RTPS")}
-            >
-              RTPS
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "JobCard"}
-              onClick={() => setSelectedServiceType("JobCard")}
-            >
-              JobCard
-            </FilterTab>
-          </FilterTabs>
-        </FilterGroup>
+      <Title>RTPS Services</Title>
 
+      <FiltersContainer>
         <FilterGroup>
           <FilterLabel>Status</FilterLabel>
           <FilterTabs>
@@ -177,7 +170,74 @@ const UserServices = () => {
             </FilterTab>
           </FilterTabs>
         </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Block</FilterLabel>
+          <FilterTabs>
+            <FilterTab
+              active={selectedBlock === "All"}
+              onClick={() => setSelectedBlock("All")}
+            >
+              All
+            </FilterTab>
+            <FilterTab
+              active={selectedBlock === "GOH"}
+              onClick={() => setSelectedBlock("GOH")}
+            >
+              GOH
+            </FilterTab>
+            <FilterTab
+              active={selectedBlock === "KONCH"}
+              onClick={() => setSelectedBlock("KONCH")}
+            >
+              KONCH
+            </FilterTab>
+          </FilterTabs>
+        </FilterGroup>
+
+        <FilterGroup>
+          <FilterLabel>Registration Type</FilterLabel>
+          <FilterTabs>
+            <FilterTab
+              active={selectedRegistrationType === "All"}
+              onClick={() => setSelectedRegistrationType("All")}
+            >
+              All
+            </FilterTab>
+            <FilterTab
+              active={selectedRegistrationType === "BRCCO"}
+              onClick={() => setSelectedRegistrationType("BRCCO")}
+            >
+              BRCCO
+            </FilterTab>
+            <FilterTab
+              active={selectedRegistrationType === "BICCO"}
+              onClick={() => setSelectedRegistrationType("BICCO")}
+            >
+              BICCO
+            </FilterTab>
+            <FilterTab
+              active={selectedRegistrationType === "BCCCO"}
+              onClick={() => setSelectedRegistrationType("BCCCO")}
+            >
+              BCCCO
+            </FilterTab>
+            <FilterTab
+              active={selectedRegistrationType === "NCLCO"}
+              onClick={() => setSelectedRegistrationType("NCLCO")}
+            >
+              NCLCO
+            </FilterTab>
+            <FilterTab
+              active={selectedRegistrationType === "BOBCO"}
+              onClick={() => setSelectedRegistrationType("BOBCO")}
+            >
+              BOBCO
+            </FilterTab>
+          </FilterTabs>
+        </FilterGroup>
       </FiltersContainer>
+
       <DeleteAllContainer>
         <DeleteAllButton
           onClick={handleDeleteAll}
@@ -185,15 +245,16 @@ const UserServices = () => {
             isLoading || (filteredServices && filteredServices.length === 0)
           }
         >
-          Delete All Services
+          Delete All RTPS Services
           <Trash2 size={16} />
         </DeleteAllButton>
       </DeleteAllContainer>
-      {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
-      {error && <ErrorMessage>Error fetching services</ErrorMessage>}
+
+      {isLoading && <LoadingMessage>Loading RTPS services...</LoadingMessage>}
+      {error && <ErrorMessage>Error fetching RTPS services</ErrorMessage>}
       {!isLoading && !error && filteredServices.length === 0 && (
         <EmptyState>
-          No services found matching the selected filters.
+          No RTPS services found matching the selected filters.
         </EmptyState>
       )}
 
@@ -203,7 +264,9 @@ const UserServices = () => {
             <TableHeader>
               <tr>
                 <TableHeaderCell>Service Type</TableHeaderCell>
-                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell>Registration Number</TableHeaderCell>
+                <TableHeaderCell>Block</TableHeaderCell>
+                <TableHeaderCell>Registration Type</TableHeaderCell>
                 <TableHeaderCell>Status</TableHeaderCell>
                 <TableHeaderCell>Applied On</TableHeaderCell>
                 <TableHeaderCell>Comments</TableHeaderCell>
@@ -222,7 +285,21 @@ const UserServices = () => {
                   <TableCell>
                     <ServiceType>{service.serviceType}</ServiceType>
                   </TableCell>
-                  <TableCell>{service.specificService.fullName}</TableCell>
+                  <TableCell>
+                    <RegistrationNumber>
+                      {generateRegistrationNumber(service)}
+                    </RegistrationNumber>
+                  </TableCell>
+                  <TableCell>
+                    <BlockBadge>
+                      {service.specificService?.block || "N/A"}
+                    </BlockBadge>
+                  </TableCell>
+                  <TableCell>
+                    <RegistrationTypeBadge>
+                      {service.specificService?.registrationType || "N/A"}
+                    </RegistrationTypeBadge>
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={service.status}>
                       {service.status}
@@ -271,10 +348,10 @@ const UserServices = () => {
       {deleteConfirmation && (
         <ConfirmationModal>
           <ConfirmationContent>
-            <h3>Delete Service</h3>
+            <h3>Delete RTPS Service</h3>
             <p>
-              Are you sure you want to delete this service? This action cannot
-              be undone.
+              Are you sure you want to delete this RTPS service? This action
+              cannot be undone.
             </p>
             <ConfirmationActions>
               <CancelButton onClick={cancelDelete}>Cancel</CancelButton>
@@ -288,13 +365,14 @@ const UserServices = () => {
           </ConfirmationContent>
         </ConfirmationModal>
       )}
+
       {showDeleteAllConfirmation && (
         <ConfirmationModal>
           <ConfirmationContent>
-            <h3>Delete All Services</h3>
+            <h3>Delete All RTPS Services</h3>
             <p>
-              Are you sure you want to delete all your services? This action
-              cannot be undone.
+              Are you sure you want to delete all your RTPS services? This
+              action cannot be undone.
             </p>
             <ConfirmationActions>
               <CancelButton onClick={cancelDeleteAll}>Cancel</CancelButton>
@@ -314,7 +392,7 @@ const UserServices = () => {
   );
 };
 
-export default UserServices;
+export default RTPSServices;
 
 // Styled Components
 const Container = styled(motion.div)`
@@ -334,13 +412,19 @@ const Title = styled.h2`
 const FiltersContainer = styled.div`
   margin-bottom: 2rem;
   display: flex;
-  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 `;
 
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  /* border-right: 1px solid var(--color-border); */
+  /* padding-right: 1rem; */
+  /* background: var(--color-surface); */
+  /* padding: 1rem; */
+  /* border-radius: 10px; */
 `;
 
 const FilterLabel = styled.h3`
@@ -373,6 +457,35 @@ const FilterTab = styled.button`
   &:hover {
     background-color: ${(props) =>
       props.active ? "var(--color-primary)" : "var(--color-surface-secondary)"};
+  }
+`;
+
+const DeleteAllContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+`;
+
+const DeleteAllButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  background-color: var(--color-error);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #d63031;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
@@ -411,6 +524,7 @@ const TableContainer = styled.div`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 `;
 
 const TableHeader = styled.thead`
@@ -424,6 +538,7 @@ const TableHeaderCell = styled.th`
   color: var(--color-text);
   border-bottom: 1px solid var(--color-border-light);
   font-size: 0.875rem;
+  white-space: nowrap;
 `;
 
 const TableRow = styled(motion.tr)`
@@ -454,6 +569,34 @@ const ServiceType = styled.h3`
   font-weight: 500;
 `;
 
+const RegistrationNumber = styled.span`
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  font-weight: 500;
+  background-color: var(--color-surface-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+`;
+
+const BlockBadge = styled.span`
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--color-primary);
+  color: white;
+`;
+
+const RegistrationTypeBadge = styled.span`
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--color-warning);
+  color: white;
+`;
+
 const StatusBadge = styled.span`
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -477,13 +620,6 @@ const CommentSection = styled.div`
   padding: 0.75rem;
   margin: 0.25rem 0;
   max-width: 300px;
-`;
-
-const CommentTitle = styled.h4`
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
-  font-weight: 500;
 `;
 
 const CommentItem = styled.div`
@@ -590,35 +726,6 @@ const DeleteConfirmButton = styled.button`
 
   &:disabled {
     opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
-
-const DeleteAllContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-`;
-
-const DeleteAllButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 500;
-  border: none;
-  background-color: var(--color-error);
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: #d63031;
-  }
-
-  &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
   }
 `;

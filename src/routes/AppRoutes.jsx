@@ -38,6 +38,19 @@ import ServicesJobCard from "../pages/AdminDashboard/ServicesJobCard";
 import ServicesRtps from "../pages/AdminDashboard/ServicesRtps";
 import DocumentUpload from "../test/DocumentUpload";
 import DocumentTester from "../test/DocumentTester";
+import AadharCard from "../pages/Products/AadharCard";
+import VoterCard from "../pages/Products/VoterID";
+import EShareCard from "../pages/Products/EShareCard";
+import AyushmanCard from "../pages/Products/AyushmanCard";
+import PanCard from "../pages/Products/PanCard";
+import PanCardPVC from "../pages/Products/PanCardPVC";
+import A4Paper from "../pages/Products/A4Paper ";
+import PhotoPaper from "../pages/Products/PhotoPaper";
+import LaminatePouch from "../pages/Products/LaminatePouch";
+import LaminatedAadhar from "../pages/Products/LaminatedAadhar";
+import PanCardServices from "../pages/Dashboard/Lists/PanCardServices";
+import RTPSServices from "../pages/Dashboard/Lists/RTPSServices";
+import JobCardServices from "../pages/Dashboard/Lists/JobCardServices";
 
 const AppRoutes = () => {
   return (
@@ -48,7 +61,23 @@ const AppRoutes = () => {
           <Route path="login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/services" element={<Services />} />
+
+          <Route path="/services">
+            <Route path="" element={<Services />} />
+            <Route path="aadhar-card" element={<AadharCard />} />
+            <Route path="voter-id" element={<VoterCard />} />
+            <Route path="eshare-card" element={<EShareCard />} />
+            <Route path="ayushman-card" element={<AyushmanCard />} />
+
+            <Route path="pan-card" element={<PanCard />} />
+
+            <Route path="pan-card-pvc" element={<PanCardPVC />} />
+            <Route path="a4-paper" element={<A4Paper />} />
+            <Route path="photo-paper" element={<PhotoPaper />} />
+            <Route path="laminated-pouch" element={<LaminatePouch />} />
+            <Route path="laminated-aadhar" element={<LaminatedAadhar />} />
+          </Route>
+
           <Route path="/apply/pan-card" element={<ApplyPanCard />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -65,9 +94,21 @@ const AppRoutes = () => {
             <Route path="" element={<UserProfile />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="services" element={<UserServices />} />
+
             <Route path="services/pan-card" element={<ApplyPanCard />} />
+            <Route
+              path="services/pan-card/list"
+              element={<PanCardServices />}
+            />
+
             <Route path="services/rtps" element={<ApplyRtps />} />
+            <Route path="services/rtps/list" element={<RTPSServices />} />
+
             <Route path="services/job-card" element={<ApplyJobCard />} />
+            <Route
+              path="services/job-card/list"
+              element={<JobCardServices />}
+            />
 
             <Route
               path="services/pan/:serviceId"

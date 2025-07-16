@@ -1,22 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance from "../../../api/axiosInstance";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { errorToast, successToast } from "../../utils/ToastNotfications";
+import { errorToast, successToast } from "../../../utils/ToastNotfications";
 
-const fetchUserServices = async () => {
+const fetchJobCardServices = async () => {
   const res = await axiosInstance.get("/services/my-services");
-  return res.data;
+  // Filter only JobCard services
+  return res.data.filter((service) => service.serviceType === "JobCard");
 };
 
-const UserServices = () => {
+const JobCardServices = () => {
   const { data, error, isLoading } = useQuery({
-    queryKey: ["userServices"],
-    queryFn: fetchUserServices,
+    queryKey: ["jobCardServices"],
+    queryFn: fetchJobCardServices,
   });
 
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
@@ -24,22 +25,14 @@ const UserServices = () => {
     useState(false);
   const queryClient = useQueryClient();
 
-  const [selectedServiceType, setSelectedServiceType] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
 
   const navigate = useNavigate();
 
   const fetchServiceDetails = async (serviceId) => {
     const res = await axiosInstance.get(`/admin/service/${serviceId}`);
-    console.log(res.data.serviceType);
-    const serviceType = res.data.serviceType;
-    if (serviceType === "PanCard") {
-      navigate(`/dashboard/services/pan/${serviceId}`);
-    } else if (serviceType === "RTPS") {
-      navigate(`/dashboard/services/rtps/${serviceId}`);
-    } else if (serviceType === "JobCard") {
-      navigate(`/dashboard/services/job-card/${serviceId}`);
-    }
+    // Navigate to JobCard details page
+    navigate(`/dashboard/services/job-card/${serviceId}`);
   };
 
   const deleteServiceMutation = useMutation({
@@ -47,24 +40,29 @@ const UserServices = () => {
       return await axiosInstance.delete(`/services/${serviceId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["userServices"]);
-      successToast("Service deleted successfully");
+      queryClient.invalidateQueries(["jobCardServices"]);
+      successToast("JobCard service deleted successfully");
     },
     onError: () => {
-      errorToast("Failed to delete service");
+      errorToast("Failed to delete JobCard service");
     },
   });
 
   const deleteAllServicesMutation = useMutation({
     mutationFn: async () => {
-      return await axiosInstance.delete("/services/all");
+      // Get all JobCard service IDs and delete them
+      const jobCardServices = data || [];
+      const deletePromises = jobCardServices.map((service) =>
+        axiosInstance.delete(`/services/${service._id}`)
+      );
+      return await Promise.all(deletePromises);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["userServices"]);
-      successToast("All services deleted successfully");
+      queryClient.invalidateQueries(["jobCardServices"]);
+      successToast("All JobCard services deleted successfully");
     },
     onError: () => {
-      errorToast("Failed to delete services");
+      errorToast("Failed to delete JobCard services");
     },
   });
 
@@ -97,16 +95,13 @@ const UserServices = () => {
     setShowDeleteAllConfirmation(false);
   };
 
-  // Filter services based on selected filters
+  // Filter services based on selected status
   const filteredServices =
     !isLoading && !error && data
       ? data.filter((service) => {
-          const matchesServiceType =
-            selectedServiceType === "All" ||
-            service.serviceType === selectedServiceType;
           const matchesStatus =
             selectedStatus === "All" || service.status === selectedStatus;
-          return matchesServiceType && matchesStatus;
+          return matchesStatus;
         })
       : [];
 
@@ -116,38 +111,9 @@ const UserServices = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Title>My Services</Title>
-      <FiltersContainer>
-        <FilterGroup>
-          <FilterLabel>Service Type</FilterLabel>
-          <FilterTabs>
-            <FilterTab
-              active={selectedServiceType === "All"}
-              onClick={() => setSelectedServiceType("All")}
-            >
-              All
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "PanCard"}
-              onClick={() => setSelectedServiceType("PanCard")}
-            >
-              PanCard
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "RTPS"}
-              onClick={() => setSelectedServiceType("RTPS")}
-            >
-              RTPS
-            </FilterTab>
-            <FilterTab
-              active={selectedServiceType === "JobCard"}
-              onClick={() => setSelectedServiceType("JobCard")}
-            >
-              JobCard
-            </FilterTab>
-          </FilterTabs>
-        </FilterGroup>
+      <Title>My JobCard Services</Title>
 
+      <FiltersContainer>
         <FilterGroup>
           <FilterLabel>Status</FilterLabel>
           <FilterTabs>
@@ -178,6 +144,7 @@ const UserServices = () => {
           </FilterTabs>
         </FilterGroup>
       </FiltersContainer>
+
       <DeleteAllContainer>
         <DeleteAllButton
           onClick={handleDeleteAll}
@@ -185,15 +152,18 @@ const UserServices = () => {
             isLoading || (filteredServices && filteredServices.length === 0)
           }
         >
-          Delete All Services
+          Delete All JobCard Services
           <Trash2 size={16} />
         </DeleteAllButton>
       </DeleteAllContainer>
-      {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
-      {error && <ErrorMessage>Error fetching services</ErrorMessage>}
+
+      {isLoading && (
+        <LoadingMessage>Loading JobCard services...</LoadingMessage>
+      )}
+      {error && <ErrorMessage>Error fetching JobCard services</ErrorMessage>}
       {!isLoading && !error && filteredServices.length === 0 && (
         <EmptyState>
-          No services found matching the selected filters.
+          No JobCard services found matching the selected filters.
         </EmptyState>
       )}
 
@@ -271,10 +241,10 @@ const UserServices = () => {
       {deleteConfirmation && (
         <ConfirmationModal>
           <ConfirmationContent>
-            <h3>Delete Service</h3>
+            <h3>Delete JobCard Service</h3>
             <p>
-              Are you sure you want to delete this service? This action cannot
-              be undone.
+              Are you sure you want to delete this JobCard service? This action
+              cannot be undone.
             </p>
             <ConfirmationActions>
               <CancelButton onClick={cancelDelete}>Cancel</CancelButton>
@@ -288,13 +258,14 @@ const UserServices = () => {
           </ConfirmationContent>
         </ConfirmationModal>
       )}
+
       {showDeleteAllConfirmation && (
         <ConfirmationModal>
           <ConfirmationContent>
-            <h3>Delete All Services</h3>
+            <h3>Delete All JobCard Services</h3>
             <p>
-              Are you sure you want to delete all your services? This action
-              cannot be undone.
+              Are you sure you want to delete all your JobCard services? This
+              action cannot be undone.
             </p>
             <ConfirmationActions>
               <CancelButton onClick={cancelDeleteAll}>Cancel</CancelButton>
@@ -314,7 +285,7 @@ const UserServices = () => {
   );
 };
 
-export default UserServices;
+export default JobCardServices;
 
 // Styled Components
 const Container = styled(motion.div)`
@@ -334,7 +305,7 @@ const Title = styled.h2`
 const FiltersContainer = styled.div`
   margin-bottom: 2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 const FilterGroup = styled.div`
@@ -477,13 +448,6 @@ const CommentSection = styled.div`
   padding: 0.75rem;
   margin: 0.25rem 0;
   max-width: 300px;
-`;
-
-const CommentTitle = styled.h4`
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  margin-bottom: 0.75rem;
-  font-weight: 500;
 `;
 
 const CommentItem = styled.div`

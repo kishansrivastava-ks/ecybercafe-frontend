@@ -11,13 +11,21 @@ import {
   Home,
   Menu,
   X,
+  CreditCard,
+  FileText,
+  Briefcase,
 } from "lucide-react";
 import ThemeToggle from "../utils/ThemeToggle";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const DashboardLayout = () => {
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  // const [isServicesOpen, setIsServicesOpen] = useState(false);
+
+  const [isPanOpen, setIsPanOpen] = useState(false);
+  const [isRtpsOpen, setIsRtpsOpen] = useState(false);
+  const [isJobCardOpen, setIsJobCardOpen] = useState(false);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -107,47 +115,116 @@ const DashboardLayout = () => {
             <Grid size={20} />
             My Services
           </StyledLink>
+
+          {/* PAN Card Dropdown */}
           <ServiceDropdown>
-            <div onClick={() => setIsServicesOpen(!isServicesOpen)}>
-              <Grid size={20} />
-              Apply for a Service
+            <div onClick={() => setIsPanOpen(!isPanOpen)}>
+              <CreditCard size={20} />
+              PAN Card
               <ChevronDown
                 size={16}
                 style={{
                   marginLeft: "auto",
-                  transform: isServicesOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transform: isPanOpen ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.3s ease",
                 }}
               />
             </div>
-            {isServicesOpen && (
+            {isPanOpen && (
               <DropdownContent>
                 <StyledLink
                   to="/dashboard/services/pan-card"
                   onClick={() => {
-                    setIsServicesOpen(false);
+                    setIsPanOpen(false);
                     isMobile && setSidebarOpen(false);
                   }}
                 >
-                  PAN Card
+                  Apply PAN Card
                 </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/pan-card/list" // Update this route later
+                  onClick={() => {
+                    setIsPanOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List PAN Card
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown>
+
+          {/* RTPS Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
+              <FileText size={20} /> {/* Suggested: More specific icon */}
+              RTPS
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isRtpsOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isRtpsOpen && (
+              <DropdownContent>
                 <StyledLink
                   to="/dashboard/services/rtps"
                   onClick={() => {
-                    setIsServicesOpen(false);
+                    setIsRtpsOpen(false);
                     isMobile && setSidebarOpen(false);
                   }}
                 >
-                  RTPS
+                  Apply RTPS
                 </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/rtps/list" // Update this route later
+                  onClick={() => {
+                    setIsRtpsOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List RTPS
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown>
+
+          {/* Job Card Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsJobCardOpen(!isJobCardOpen)}>
+              <Briefcase size={20} /> {/* Suggested: More specific icon */}
+              Job Card
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isJobCardOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isJobCardOpen && (
+              <DropdownContent>
                 <StyledLink
                   to="/dashboard/services/job-card"
                   onClick={() => {
-                    setIsServicesOpen(false);
+                    setIsJobCardOpen(false);
                     isMobile && setSidebarOpen(false);
                   }}
                 >
-                  Job Card
+                  Apply Job Card
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/job-card/list" // Update this route later
+                  onClick={() => {
+                    setIsJobCardOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List Job Card
                 </StyledLink>
               </DropdownContent>
             )}

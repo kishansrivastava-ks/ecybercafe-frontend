@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -33,73 +34,83 @@ const Services = () => {
       icon: CreditCard,
       title: "Aadhar Card",
       description: "Apply for or update your Aadhar identity card with ease.",
-      color: "#6366F1", // var(--color-primary)
+      color: "#6366F1",
       path: "aadhar-card",
+      price: 50,
     },
     {
       icon: Vote,
       title: "Voter Card",
       description: "Register for or modify your voter identification card.",
-      color: "#EC4899", // var(--color-secondary)
+      color: "#EC4899",
       path: "voter-card",
+      price: 40,
     },
     {
       icon: Share2,
       title: "E Share Card",
       description:
         "Digital share certificates and electronic registration solutions.",
-      color: "#10B981", // var(--color-accent)
+      color: "#10B981",
       path: "e-share-card",
+      price: 100,
     },
     {
       icon: Heart,
       title: "Ayushman Card",
       description: "Health insurance card for affordable medical care access.",
-      color: "#6366F1", // var(--color-primary)
+      color: "#6366F1",
       path: "ayushman-card",
+      price: 30,
     },
     {
       icon: FileText,
       title: "Pan Card",
       description: "Apply or update your Permanent Account Number easily.",
-      color: "#EC4899", // var(--color-secondary)
+      color: "#EC4899",
       path: "pan-card",
+      price: 50,
     },
     {
       icon: Printer,
       title: "Pan Card PVC Print",
       description: "Get your PAN card printed on durable PVC material.",
-      color: "#10B981", // var(--color-accent)
+      color: "#10B981",
       path: "pan-card-pvc",
+      price: 60,
     },
     {
       icon: FileSpreadsheet,
       title: "Computer Paper A4 Size",
       description: "High-quality A4 size paper for all your printing needs.",
-      color: "#6366F1", // var(--color-primary)
+      color: "#6366F1",
       path: "a4-paper",
+      price: 15,
     },
     {
       icon: Image,
       title: "4X6 Photo Paper",
       description: "Professional photo paper for high-quality prints.",
-      color: "#EC4899", // var(--color-secondary)
+      color: "#EC4899",
       path: "photo-paper",
+      price: 20,
     },
     {
       icon: Layers,
       title: "Laminate A4 Pouch",
       description: "A4 size lamination pouches for document protection.",
-      color: "#10B981", // var(--color-accent)
+      color: "#10B981",
       path: "laminate-pouch",
+      price: 10,
     },
     {
       icon: BadgeCheck,
       title: "Laminated Pouch Aadhar Card",
       description:
         "Protect your Aadhar card with our special lamination service.",
-      color: "#6366F1", // var(--color-primary)
+      color: "#6366F1",
       path: "laminated-aadhar",
+      price: 25,
     },
   ];
 
@@ -142,11 +153,12 @@ const Services = () => {
           >
             <ServiceCard $color={service.color}>
               <IconWrapper $color={service.color}>
-                <service.icon size={48} color={service.color} />
+                <service.icon size={56} color="#fff" />
               </IconWrapper>
 
               <ServiceContent>
                 <ServiceTitle>{service.title}</ServiceTitle>
+                <Price>₹{service.price}</Price>
                 <ServiceDescription>{service.description}</ServiceDescription>
 
                 <Button
@@ -210,46 +222,25 @@ const ServiceCardWrapper = styled(motion.div)`
 `;
 
 const ServiceCard = styled.div`
-  background: var(--color-surface);
+  background: #fff;
   border-radius: 16px;
-  box-shadow: 0 8px 20px
-    ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.75rem;
-  gap: 1.25rem;
-  transition: all 0.3s ease;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px
-        ${(props) => `rgba(${getColorValues(props.$color)}, 0.15)`},
-      0 8px 20px ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 5px;
-    height: 100%;
-    background-color: ${(props) => props.$color};
-  }
+  transition: box-shadow 0.3s ease;
+  min-height: 320px;
 `;
 
 const IconWrapper = styled.div`
+  background-color: ${(props) => props.$color};
+  border-radius: 50%;
+  padding: 1rem;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background-color: ${(props) => `rgba(${getColorValues(props.$color)}, 0.1)`};
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 0.25rem;
+  align-items: center;
+  margin-bottom: 1rem;
 `;
 
 const ServiceContent = styled.div`
@@ -260,29 +251,35 @@ const ServiceContent = styled.div`
   width: 100%;
 `;
 
-const ServiceTitle = styled.h2`
-  font-size: 1.5rem;
-  color: var(--color-text);
-  margin-bottom: 0.25rem;
+const ServiceTitle = styled.h3`
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
 `;
 
 const ServiceDescription = styled.p`
-  color: var(--color-text-secondary);
-  margin-bottom: 1rem;
-  line-height: 1.6;
-  flex-grow: 1;
   font-size: 0.95rem;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1rem;
+`;
+
+const Price = styled.p`
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
 `;
 
 // Helper function to convert hex color to RGB values
-function getColorValues(hex) {
-  // Remove the # if it exists
-  hex = hex.replace("#", "");
+// function getColorValues(hex) {
+//   // Remove the # if it exists
+//   hex = hex.replace("#", "");
 
-  // Parse the hex values
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
+//   // Parse the hex values
+//   const r = parseInt(hex.substring(0, 2), 16);
+//   const g = parseInt(hex.substring(2, 4), 16);
+//   const b = parseInt(hex.substring(4, 6), 16);
 
-  return `${r}, ${g}, ${b}`;
-}
+//   return `${r}, ${g}, ${b}`;
+// }

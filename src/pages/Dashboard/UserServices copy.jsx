@@ -196,78 +196,60 @@ const UserServices = () => {
           No services found matching the selected filters.
         </EmptyState>
       )}
-
       {!isLoading && !error && filteredServices.length > 0 && (
-        <TableContainer>
-          <Table>
-            <TableHeader>
-              <tr>
-                <TableHeaderCell>Service Type</TableHeaderCell>
-                <TableHeaderCell>Name</TableHeaderCell>
-                <TableHeaderCell>Status</TableHeaderCell>
-                <TableHeaderCell>Applied On</TableHeaderCell>
-                <TableHeaderCell>Comments</TableHeaderCell>
-                <TableHeaderCell>Actions</TableHeaderCell>
-              </tr>
-            </TableHeader>
-            <tbody>
-              {filteredServices.map((service) => (
-                <TableRow
-                  key={service._id}
-                  whileHover={{
-                    backgroundColor: "var(--color-surface-secondary)",
-                  }}
-                  onClick={() => fetchServiceDetails(service._id)}
-                >
-                  <TableCell>
-                    <ServiceType>{service.serviceType}</ServiceType>
-                  </TableCell>
-                  <TableCell>{service.specificService.fullName}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={service.status}>
-                      {service.status}
-                    </StatusBadge>
-                  </TableCell>
-                  <TableCell>
-                    {format(
-                      new Date(service.createdAt),
-                      "dd MMM yyyy, HH:mm a"
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {service.comments.length > 0 ? (
-                      <CommentSection>
-                        {service.comments.map((comment, index) => (
-                          <CommentItem key={index}>
-                            <CommentText>{comment.text}</CommentText>
-                            <CommentDate>
-                              {new Date(comment.createdAt).toLocaleString()}
-                            </CommentDate>
-                          </CommentItem>
-                        ))}
-                      </CommentSection>
-                    ) : (
-                      <span style={{ color: "var(--color-text-muted)" }}>
-                        No comments
-                      </span>
-                    )}
-                  </TableCell>
-                  <ActionCell>
-                    <DeleteButton
-                      onClick={(e) => handleDeleteClick(e, service._id)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Trash2 size={16} color="var(--color-error)" />
-                    </DeleteButton>
-                  </ActionCell>
-                </TableRow>
-              ))}
-            </tbody>
-          </Table>
-        </TableContainer>
-      )}
+        <ServiceGrid>
+          {filteredServices.map((service) => (
+            <ServiceCard
+              key={service._id}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 8px 15px rgba(0,0,0,0.1)",
+              }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => fetchServiceDetails(service._id)}
+              style={{ cursor: "pointer" }}
+            >
+              <ServiceHeader>
+                <ServiceType>{service.serviceType}</ServiceType>
 
+                <StatusBadge status={service.status}>
+                  {service.status}
+                </StatusBadge>
+              </ServiceHeader>
+
+              <div style={{ marginBottom: "1rem" }}>
+                <div>Name: {service.specificService.fullName}</div>
+                <div>
+                  Applied on:
+                  {format(new Date(service.createdAt), "dd MMM yyyy, HH:mm a")}
+                </div>
+              </div>
+
+              <DeleteButton
+                onClick={(e) => handleDeleteClick(e, service._id)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Trash2 size={16} color="var(--color-error)" />
+              </DeleteButton>
+
+              {service.comments.length > 0 && (
+                <CommentSection>
+                  <CommentTitle>Admin Comments</CommentTitle>
+                  {service.comments.map((comment, index) => (
+                    <CommentItem key={index}>
+                      <CommentText>{comment.text}</CommentText>
+                      <CommentDate>
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </CommentDate>
+                    </CommentItem>
+                  ))}
+                </CommentSection>
+              )}
+            </ServiceCard>
+          ))}
+        </ServiceGrid>
+      )}
       {deleteConfirmation && (
         <ConfirmationModal>
           <ConfirmationContent>
@@ -399,53 +381,26 @@ const EmptyState = styled.div`
   border: 1px solid var(--color-border-light);
 `;
 
-const TableContainer = styled.div`
+const ServiceGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+`;
+
+const ServiceCard = styled(motion.div)`
   background-color: var(--color-surface);
   border-radius: 12px;
   border: 1px solid var(--color-border-light);
-  overflow: hidden;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
 `;
 
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-`;
-
-const TableHeader = styled.thead`
-  background-color: var(--color-surface-secondary);
-`;
-
-const TableHeaderCell = styled.th`
-  padding: 1rem;
-  text-align: left;
-  font-weight: 500;
-  color: var(--color-text);
-  border-bottom: 1px solid var(--color-border-light);
-  font-size: 0.875rem;
-`;
-
-const TableRow = styled(motion.tr)`
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--color-surface-secondary);
-  }
-`;
-
-const TableCell = styled.td`
-  padding: 1rem;
-  border-bottom: 1px solid var(--color-border-light);
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  vertical-align: top;
-`;
-
-const ActionCell = styled(TableCell)`
-  width: 60px;
-  text-align: center;
+const ServiceHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 `;
 
 const ServiceType = styled.h3`
@@ -472,11 +427,9 @@ const StatusBadge = styled.span`
 `;
 
 const CommentSection = styled.div`
-  background-color: var(--color-bg);
-  border-radius: 6px;
-  padding: 0.75rem;
-  margin: 0.25rem 0;
-  max-width: 300px;
+  background-color: var(--color-surface-secondary);
+  border-radius: 8px;
+  padding: 1rem;
 `;
 
 const CommentTitle = styled.h4`
@@ -487,8 +440,10 @@ const CommentTitle = styled.h4`
 `;
 
 const CommentItem = styled.div`
-  margin-bottom: 0.5rem;
-  padding: 0.25rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: var(--color-bg);
+  border-radius: 6px;
   &:last-child {
     margin-bottom: 0;
   }
