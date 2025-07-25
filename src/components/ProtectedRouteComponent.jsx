@@ -5,7 +5,11 @@ import useAuth from "../contexts/useAuth";
 import { errorToast } from "../utils/ToastNotfications";
 
 const ProtectedRoute = ({ allowedRoles }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!user) {
     // Redirect to login if no user is logged in

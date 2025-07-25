@@ -34,6 +34,8 @@ const AdminServices = () => {
       navigate(`/admin-dashboard/service/rtps/${serviceId}`);
     } else if (serviceType === "JobCard") {
       navigate(`/admin-dashboard/service/job-card/${serviceId}`);
+    } else if (serviceType === "ITR") {
+      navigate(`/admin-dashboard/service/itr/${serviceId}`);
     }
   };
 
@@ -59,7 +61,8 @@ const AdminServices = () => {
             <option value="All">All</option>
             <option value="PanCard">PanCard</option>
             <option value="RTPS">RTPS</option>
-            <option value="JobCard">JobCard</option>
+            {/* <option value="JobCard">JobCard</option> */}
+            <option value="ITR">ITR</option>
           </select>
         </FilterGroup>
 

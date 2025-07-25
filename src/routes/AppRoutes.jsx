@@ -51,6 +51,9 @@ import LaminatedAadhar from "../pages/Products/LaminatedAadhar";
 import PanCardServices from "../pages/Dashboard/Lists/PanCardServices";
 import RTPSServices from "../pages/Dashboard/Lists/RTPSServices";
 import JobCardServices from "../pages/Dashboard/Lists/JobCardServices";
+import ASDITR from "../pages/AdminDashboard/ASDITR";
+import ApplyITR from "../pages/Services/ApplyITR";
+import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
 
 const AppRoutes = () => {
   return (
@@ -110,6 +113,8 @@ const AppRoutes = () => {
               element={<JobCardServices />}
             />
 
+            <Route path="services/itr" element={<ApplyITR />} />
+
             <Route
               path="services/pan/:serviceId"
               element={<ServiceDetailsPan />}
@@ -122,6 +127,10 @@ const AppRoutes = () => {
               path="services/job-card/:serviceId"
               element={<ServiceDetailsJobCard />}
             />
+            <Route
+              path="services/itr/:serviceId"
+              element={<ServiceDetailsITR />}
+            />
           </Route>
         </Route>
 
@@ -132,6 +141,7 @@ const AppRoutes = () => {
             <Route path="service/pan/:id" element={<ASDPan />} />
             <Route path="service/rtps/:id" element={<ASDRtps />} />
             <Route path="service/job-card/:id" element={<ASDJobCard />} />
+            <Route path="service/itr/:id" element={<ASDITR />} />
             <Route path="services" element={<ServicesByType />} />
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />

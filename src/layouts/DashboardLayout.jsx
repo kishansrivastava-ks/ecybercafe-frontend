@@ -26,6 +26,8 @@ const DashboardLayout = () => {
   const [isRtpsOpen, setIsRtpsOpen] = useState(false);
   const [isJobCardOpen, setIsJobCardOpen] = useState(false);
 
+  const [isItrOpen, setIsItrOpen] = useState(false);
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -155,9 +157,9 @@ const DashboardLayout = () => {
           </ServiceDropdown>
 
           {/* RTPS Dropdown */}
-          <ServiceDropdown>
+          {/* <ServiceDropdown>
             <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
-              <FileText size={20} /> {/* Suggested: More specific icon */}
+              <FileText size={20} />
               RTPS
               <ChevronDown
                 size={16}
@@ -180,7 +182,7 @@ const DashboardLayout = () => {
                   Apply RTPS
                 </StyledLink>
                 <StyledLink
-                  to="/dashboard/services/rtps/list" // Update this route later
+                  to="/dashboard/services/rtps/list"
                   onClick={() => {
                     setIsRtpsOpen(false);
                     isMobile && setSidebarOpen(false);
@@ -190,12 +192,12 @@ const DashboardLayout = () => {
                 </StyledLink>
               </DropdownContent>
             )}
-          </ServiceDropdown>
+          </ServiceDropdown> */}
 
           {/* Job Card Dropdown */}
-          <ServiceDropdown>
+          {/* <ServiceDropdown>
             <div onClick={() => setIsJobCardOpen(!isJobCardOpen)}>
-              <Briefcase size={20} /> {/* Suggested: More specific icon */}
+              <Briefcase size={20} />
               Job Card
               <ChevronDown
                 size={16}
@@ -218,13 +220,42 @@ const DashboardLayout = () => {
                   Apply Job Card
                 </StyledLink>
                 <StyledLink
-                  to="/dashboard/services/job-card/list" // Update this route later
+                  to="/dashboard/services/job-card/list"
                   onClick={() => {
                     setIsJobCardOpen(false);
                     isMobile && setSidebarOpen(false);
                   }}
                 >
                   List Job Card
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown> */}
+
+          {/* ITR Service Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsItrOpen(!isItrOpen)}>
+              <FileText size={20} />
+              ITR Service
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isItrOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isItrOpen && (
+              <DropdownContent>
+                <StyledLink
+                  to="/dashboard/services/itr"
+                  onClick={() => {
+                    setIsItrOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  Apply for ITR
                 </StyledLink>
               </DropdownContent>
             )}

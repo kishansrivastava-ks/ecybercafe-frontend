@@ -48,31 +48,6 @@ const ServiceDetailsPan = () => {
 
   const { specificService, comments } = service;
 
-  // const downloadDocument = async (documentId) => {
-  //   try {
-  //     const response = await axiosInstance.get(
-  //       `/services/${serviceId}/documents/${documentId}/download`,
-  //       { responseType: "blob" }
-  //     );
-
-  //     // Create a blob URL and trigger download
-  //     const blob = new Blob([response.data]);
-  //     const url = window.URL.createObjectURL(blob);
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", `document_${documentId}`);
-  //     document.body.appendChild(link);
-  //     link.click();
-
-  //     // Clean up
-  //     link.parentNode.removeChild(link);
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error("Download failed:", error);
-  //     // Optionally show an error toast or message
-  //   }
-  // };
-
   const downloadDocument = async (documentPath, documentName) => {
     try {
       const response = await axiosInstance.get(documentPath, {
@@ -290,14 +265,14 @@ const ServiceDetailsPan = () => {
 export default ServiceDetailsPan;
 
 // Styled Components
-const Container = styled(motion.div)`
+export const Container = styled(motion.div)`
   padding: 2rem;
   max-width: 1000px;
   margin: 0 auto;
   background-color: var(--color-bg);
 `;
 
-const PageHeader = styled.div`
+export const PageHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,13 +280,13 @@ const PageHeader = styled.div`
   gap: 1rem;
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
   font-size: 2rem;
   color: var(--color-text);
   text-align: center;
 `;
 
-const DetailsGrid = styled.div`
+export const DetailsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
@@ -321,14 +296,14 @@ const DetailsGrid = styled.div`
   }
 `;
 
-const ServiceDetailsSection = styled.div`
+export const ServiceDetailsSection = styled.div`
   background-color: var(--color-surface);
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid var(--color-border-light);
 `;
 
-const SectionTitle = styled.h3`
+export const SectionTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -339,23 +314,23 @@ const SectionTitle = styled.h3`
   border-bottom: 1px solid var(--color-border-light);
 `;
 
-const DetailItem = styled.div`
+export const DetailItem = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.75rem;
 `;
 
-const Label = styled.span`
+export const Label = styled.span`
   color: var(--color-text-muted);
   font-weight: 500;
 `;
 
-const Value = styled.span`
+export const Value = styled.span`
   color: var(--color-text);
   font-weight: 600;
 `;
 
-const StatusBadge = styled.span`
+export const StatusBadge = styled.span`
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -374,7 +349,7 @@ const StatusBadge = styled.span`
   color: white;
 `;
 
-const DocumentSection = styled.div`
+export const DocumentSection = styled.div`
   grid-column: span 2;
   background-color: var(--color-surface);
   border-radius: 12px;
@@ -386,7 +361,7 @@ const DocumentSection = styled.div`
   }
 `;
 
-const DocumentGrid = styled.div`
+export const DocumentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -396,18 +371,18 @@ const DocumentGrid = styled.div`
   }
 `;
 
-const DocumentItem = styled.div`
+export const DocumentItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-const DocumentLabel = styled.span`
+export const DocumentLabel = styled.span`
   margin-bottom: 0.5rem;
   color: var(--color-text-secondary);
 `;
 
-const DocumentPreview = styled.img`
+export const DocumentPreview = styled.img`
   max-width: 100%;
   max-height: 300px;
   object-fit: contain;
@@ -415,7 +390,7 @@ const DocumentPreview = styled.img`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const CommentsSection = styled.div`
+export const CommentsSection = styled.div`
   grid-column: span 2;
   background-color: var(--color-surface);
   border-radius: 12px;
@@ -427,24 +402,24 @@ const CommentsSection = styled.div`
   }
 `;
 
-const CommentItem = styled.div`
+export const CommentItem = styled.div`
   background-color: var(--color-bg);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
 `;
 
-const CommentText = styled.p`
+export const CommentText = styled.p`
   color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 `;
 
-const CommentDate = styled.span`
+export const CommentDate = styled.span`
   color: var(--color-text-muted);
   font-size: 0.75rem;
 `;
 
-const LoadingContainer = styled.div`
+export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -452,7 +427,7 @@ const LoadingContainer = styled.div`
   color: var(--color-text-secondary);
 `;
 
-const ErrorContainer = styled.div`
+export const ErrorContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -461,7 +436,7 @@ const ErrorContainer = styled.div`
 `;
 
 // downloadable docs styles
-const DownloadButton = styled.button`
+export const DownloadButton = styled.button`
   background-color: var(--color-primary);
   color: white;
   border: none;
@@ -475,20 +450,20 @@ const DownloadButton = styled.button`
   }
 `;
 
-const NoDocumentsMessage = styled.p`
+export const NoDocumentsMessage = styled.p`
   color: var(--color-text-secondary);
   font-style: italic;
   text-align: center;
   padding: 20px;
 `;
 
-const DocumentPreviewWrapper = styled.div`
+export const DocumentPreviewWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 0.5rem;
 `;
-const PDFPlaceholder = styled.div`
+export const PDFPlaceholder = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

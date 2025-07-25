@@ -459,26 +459,26 @@ const formatStatus = (status) => {
 };
 
 // Styled Components
-const Container = styled(motion.div)`
+export const Container = styled(motion.div)`
   margin: 0 auto;
   padding: 2rem;
   background-color: var(--color-bg);
 `;
 
-const Header = styled.div`
+export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 `;
 
-const Title = styled.h2`
+export const Title = styled.h2`
   font-size: 1.75rem;
   color: var(--color-text);
   font-weight: 600;
 `;
 
-const StatusBadge = styled.span`
+export const StatusBadge = styled.span`
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -496,28 +496,28 @@ const StatusBadge = styled.span`
   color: white;
 `;
 
-const DetailsGrid = styled.div`
+export const DetailsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
 `;
 
-const DetailCard = styled.div`
+export const DetailCard = styled.div`
   background-color: var(--color-surface);
   border: 1px solid var(--color-border-light);
   border-radius: 12px;
   padding: 1.5rem;
 `;
 
-const DetailLabel = styled.div`
+export const DetailLabel = styled.div`
   color: var(--color-text-secondary);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
 `;
 
-const DetailValue = styled.div`
+export const DetailValue = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -526,7 +526,7 @@ const DetailValue = styled.div`
   font-weight: 500;
 `;
 
-const UserAvatar = styled.div`
+export const UserAvatar = styled.div`
   width: 40px;
   height: 40px;
   background-color: var(--color-primary-light);
@@ -538,20 +538,20 @@ const UserAvatar = styled.div`
   font-weight: 500;
 `;
 
-const ServiceDetailsSection = styled.div`
+export const ServiceDetailsSection = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
 `;
 
-const DetailGrid = styled.div`
+export const DetailGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
 `;
 
-const DetailItem = styled.div`
+export const DetailItem = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -561,27 +561,27 @@ const DetailItem = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const DocumentSection = styled.div`
+export const DocumentSection = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
 `;
 
-const AdditionalDocumentsSection = styled.div`
+export const AdditionalDocumentsSection = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
 `;
 
-const DocumentGrid = styled.div`
+export const DocumentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 `;
 
-const DocumentItem = styled.div`
+export const DocumentItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -591,7 +591,7 @@ const DocumentItem = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const DownloadButton = styled.button`
+export const DownloadButton = styled.button`
   display: inline-block;
   margin-top: 12px;
   padding: 8px 16px;
@@ -609,14 +609,14 @@ const DownloadButton = styled.button`
   }
 `;
 
-const DocumentLabel = styled.div`
+export const DocumentLabel = styled.div`
   margin-bottom: 10px;
   font-weight: bold;
   font-size: 16px;
   color: var(--color-text);
 `;
 
-const DocumentImage = styled.img`
+export const DocumentImage = styled.img`
   max-width: 250px;
   max-height: 250px;
   object-fit: contain;
@@ -624,7 +624,7 @@ const DocumentImage = styled.img`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const PDFDocumentPreview = styled.div`
+export const PDFDocumentPreview = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -636,19 +636,19 @@ const PDFDocumentPreview = styled.div`
   border: 1px dashed #cccccc;
 `;
 
-const PDFFilename = styled.div`
+export const PDFFilename = styled.div`
   margin-top: 10px;
   font-size: 14px;
   color: var(--color-text-secondary);
 `;
 
-const StatusActions = styled.div`
+export const StatusActions = styled.div`
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
 `;
 
-const ActionButton = styled(motion.button)`
+export const ActionButton = styled(motion.button)`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -671,14 +671,14 @@ const ActionButton = styled(motion.button)`
   }
 `;
 
-const CommentsSection = styled.div`
+export const CommentsSection = styled.div`
   background-color: var(--color-surface);
   border: 1px solid var(--color-border-light);
   border-radius: 12px;
   padding: 1.5rem;
 `;
 
-const SectionTitle = styled.h3`
+export const SectionTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -686,41 +686,41 @@ const SectionTitle = styled.h3`
   margin-bottom: 1.5rem;
 `;
 
-const EmptyState = styled.div`
+export const EmptyState = styled.div`
   text-align: center;
   color: var(--color-text-muted);
   padding: 1.5rem;
 `;
 
-const CommentsList = styled.div`
+export const CommentsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1.5rem;
 `;
 
-const CommentItem = styled.div`
+export const CommentItem = styled.div`
   background-color: var(--color-surface-secondary);
   border-radius: 8px;
   padding: 1rem;
 `;
 
-const CommentText = styled.p`
+export const CommentText = styled.p`
   color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 `;
 
-const CommentMeta = styled.small`
+export const CommentMeta = styled.small`
   color: var(--color-text-muted);
   font-size: 0.75rem;
 `;
 
-const CommentInput = styled.div`
+export const CommentInput = styled.div`
   display: flex;
   gap: 1rem;
 `;
 
-const InputField = styled.input`
+export const InputField = styled.input`
   flex: 1;
   padding: 0.75rem;
   border: 1px solid var(--color-border);
@@ -728,7 +728,7 @@ const InputField = styled.input`
   font-size: 1rem;
 `;
 
-const SendButton = styled(motion.button)`
+export const SendButton = styled(motion.button)`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -751,7 +751,7 @@ const SendButton = styled(motion.button)`
 `;
 
 // Document upload styles
-const DocumentUploadSection = styled.div`
+export const DocumentUploadSection = styled.div`
   background-color: #f9f9f9;
   border-radius: 8px;
   padding: 20px;
@@ -762,13 +762,13 @@ const DocumentUploadSection = styled.div`
   align-items: center;
 `;
 
-const FileInputWrapper = styled.div`
+export const FileInputWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 10px;
 `;
 
-const UploadButton = styled(motion.label)`
+export const UploadButton = styled(motion.label)`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -784,7 +784,7 @@ const UploadButton = styled(motion.label)`
   }
 `;
 
-const ConfirmationModal = styled.div`
+export const ConfirmationModal = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -797,7 +797,7 @@ const ConfirmationModal = styled.div`
   z-index: 1000;
 `;
 
-const ModalContent = styled.div`
+export const ModalContent = styled.div`
   background-color: white;
   padding: 30px;
   border-radius: 10px;
@@ -806,13 +806,13 @@ const ModalContent = styled.div`
   width: 100%;
 `;
 
-const ModalActions = styled.div`
+export const ModalActions = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 `;
 
-const CancelButton = styled.button`
+export const CancelButton = styled.button`
   padding: 10px 15px;
   background-color: #f44336;
   color: white;
@@ -821,7 +821,7 @@ const CancelButton = styled.button`
   cursor: pointer;
 `;
 
-const ConfirmButton = styled.button`
+export const ConfirmButton = styled.button`
   padding: 10px 15px;
   background-color: #4caf50;
   color: white;
@@ -835,7 +835,7 @@ const ConfirmButton = styled.button`
   }
 `;
 
-const PreviewImage = styled.img`
+export const PreviewImage = styled.img`
   max-width: 200px;
   max-height: 200px;
   object-fit: contain;
@@ -843,7 +843,7 @@ const PreviewImage = styled.img`
 `;
 
 // Loading and Error Components
-const LoadingContainer = styled.div`
+export const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -851,7 +851,7 @@ const LoadingContainer = styled.div`
   height: 100vh;
 `;
 
-const LoadingSpinner = () => (
+export const LoadingSpinner = () => (
   <div
     style={{
       width: "50px",
@@ -871,12 +871,12 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const LoadingText = styled.p`
+export const LoadingText = styled.p`
   margin-top: 1rem;
   color: var(--color-text-secondary);
 `;
 
-const ErrorContainer = styled.div`
+export const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -884,7 +884,7 @@ const ErrorContainer = styled.div`
   height: 100vh;
 `;
 
-const ErrorIcon = () => (
+export const ErrorIcon = () => (
   <AlertTriangle
     size={64}
     color="var(--color-error)"
@@ -892,7 +892,7 @@ const ErrorIcon = () => (
   />
 );
 
-const ErrorText = styled.p`
+export const ErrorText = styled.p`
   color: var(--color-error);
   font-size: 1.25rem;
 `;

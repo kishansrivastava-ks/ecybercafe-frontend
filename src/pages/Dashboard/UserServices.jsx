@@ -39,6 +39,8 @@ const UserServices = () => {
       navigate(`/dashboard/services/rtps/${serviceId}`);
     } else if (serviceType === "JobCard") {
       navigate(`/dashboard/services/job-card/${serviceId}`);
+    } else if (serviceType === "ITR") {
+      navigate(`/dashboard/services/itr/${serviceId}`);
     }
   };
 
@@ -144,6 +146,13 @@ const UserServices = () => {
               onClick={() => setSelectedServiceType("JobCard")}
             >
               JobCard
+            </FilterTab>
+
+            <FilterTab
+              active={selectedServiceType === "ITR"}
+              onClick={() => setSelectedServiceType("ITR")}
+            >
+              ITR
             </FilterTab>
           </FilterTabs>
         </FilterGroup>
