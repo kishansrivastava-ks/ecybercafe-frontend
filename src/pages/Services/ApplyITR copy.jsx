@@ -14,36 +14,14 @@ import { FileText, Upload, Send, AlertCircle } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
 import { successToast, errorToast } from "../../utils/ToastNotfications";
 
-// This function calls our backend to get PayU params
-const initiatePaymentWithUpload = async (formData) => {
-  const { data } = await axiosInstance.post(
-    "/payment/initiate-itr-payment",
-    formData,
-    {
-      headers: {
-        // The browser will set the correct Content-Type and boundary for multipart/form-data
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+// Form submission function
+const applyForITRService = async (formData) => {
+  const { data } = await axiosInstance.post("/services/apply/itr", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return data;
-};
-
-// Helper to auto-submit the form that redirects to PayU
-const postToPayU = (data) => {
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "https://test.payu.in/_payment"; // Use https://secure.payu.in for production
-
-  for (const key in data) {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = data[key];
-    form.appendChild(input);
-  }
-  document.body.appendChild(form);
-  form.submit();
 };
 
 const ApplyITR = () => {
@@ -56,27 +34,27 @@ const ApplyITR = () => {
   } = useForm();
 
   const mutation = useMutation({
-    mutationFn: initiatePaymentWithUpload,
-    onSuccess: (data) => {
-      // On success, we get the PayU params from our backend and post them to PayU
-      postToPayU(data);
+    mutationFn: applyForITRService,
+    onSuccess: () => {
+      successToast("ITR application submitted successfully!");
+      navigate("/dashboard/services"); // Navigate to my services page on success
     },
     onError: (error) => {
       errorToast(
-        error.response?.data?.message || "Could not connect to payment service."
+        error.response?.data?.message || "Submission failed. Please try again."
       );
     },
   });
 
   const onSubmit = (data) => {
-    // Create a FormData object to send files and text
     const formData = new FormData();
+    // Append text fields
     formData.append("aadharCardNo", data.aadharCardNo);
     formData.append("panCardNo", data.panCardNo);
     formData.append("accountNo", data.accountNo);
     formData.append("ifscCode", data.ifscCode);
 
-    // Append the actual files
+    // Append files
     formData.append("aadharFile", data.aadharFile[0]);
     formData.append("panCardFile", data.panCardFile[0]);
     formData.append("passbookFile", data.passbookFile[0]);
@@ -220,7 +198,7 @@ const ApplyITR = () => {
         </FormSection>
 
         <SubmitButton type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Uploading & Connecting..." : `Proceed to Pay`}
+          {mutation.isPending ? "Submitting..." : "Submit Application"}
           <Send size={16} />
         </SubmitButton>
       </Form>

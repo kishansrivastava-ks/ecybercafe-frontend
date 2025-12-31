@@ -72,6 +72,33 @@ const ServiceDetailsPan = () => {
     }
   };
 
+  const downloadUploadedDocument = async (documentId, documentName) => {
+    try {
+      const response = await axiosInstance.get(
+        `/services/${service._id}/documents/${documentId}/download`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", documentName);
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // Optionally show an error toast or message
+    }
+  };
+
   console.log(specificService);
 
   return (
@@ -86,51 +113,42 @@ const ServiceDetailsPan = () => {
       </PageHeader>
 
       <DetailsGrid>
-        <ServiceDetailsSection>
+        <ServiceDetailsSection style={{ gridColumn: "span 2" }}>
           <SectionTitle>
             <User size={20} />
-            Personal Information
+            Applicant Information
           </SectionTitle>
-          <DetailItem>
-            <Label>Full Name</Label>
-            <Value>{specificService.fullName}</Value>
-          </DetailItem>
-          <DetailItem>
-            <Label>Father's Name</Label>
-            <Value>{specificService.fatherName}</Value>
-          </DetailItem>
-          <DetailItem>
-            <Label>Date of Birth</Label>
-            <Value>
-              {new Date(specificService.dateOfBirth).toLocaleDateString()}
-            </Value>
-          </DetailItem>
-        </ServiceDetailsSection>
 
-        <ServiceDetailsSection>
-          <SectionTitle>
-            <Phone size={20} />
-            Contact Information
-          </SectionTitle>
-          <DetailItem>
-            <Label>Mobile Number</Label>
-            <Value>{specificService.mobileNumber}</Value>
-          </DetailItem>
-          <DetailItem>
-            <Label>Address</Label>
-            <Value>{specificService.address}</Value>
-          </DetailItem>
-        </ServiceDetailsSection>
-
-        <ServiceDetailsSection>
-          <SectionTitle>
-            <CreditCard size={20} />
-            Identification
-          </SectionTitle>
-          <DetailItem>
-            <Label>Aadhar Number</Label>
-            <Value>{specificService.aadharNumber}</Value>
-          </DetailItem>
+          <InfoTable>
+            <tbody>
+              <tr>
+                <InfoLabel>Full Name</InfoLabel>
+                <InfoValue>{specificService.fullName}</InfoValue>
+              </tr>
+              <tr>
+                <InfoLabel>Father's Name</InfoLabel>
+                <InfoValue>{specificService.fatherName}</InfoValue>
+              </tr>
+              <tr>
+                <InfoLabel>Date of Birth</InfoLabel>
+                <InfoValue>
+                  {new Date(specificService.dateOfBirth).toLocaleDateString()}
+                </InfoValue>
+              </tr>
+              <tr>
+                <InfoLabel>Mobile Number</InfoLabel>
+                <InfoValue>{specificService.mobileNumber}</InfoValue>
+              </tr>
+              <tr>
+                <InfoLabel>Aadhar Number</InfoLabel>
+                <InfoValue>{specificService.aadharNumber}</InfoValue>
+              </tr>
+              <tr>
+                <InfoLabel>Address</InfoLabel>
+                <InfoValue>{specificService.address}</InfoValue>
+              </tr>
+            </tbody>
+          </InfoTable>
         </ServiceDetailsSection>
 
         <ServiceDetailsSection>
@@ -222,13 +240,17 @@ const ServiceDetailsPan = () => {
           {service.documents && service.documents.length > 0 ? (
             <DocumentGrid>
               {service.documents.map((doc) => (
-                <DocumentItem key={doc.id}>
+                <DocumentItem key={doc._id}>
                   <DocumentLabel>{doc.documentType}</DocumentLabel>
                   <DocumentPreview
-                    src={`${import.meta.env.VITE_API_BASE_URL}${doc.filePath}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}${doc.path}`}
                     alt={`${doc.documentType} Document`}
                   />
-                  <DownloadButton onClick={() => downloadDocument(doc._id)}>
+                  <DownloadButton
+                    onClick={() =>
+                      downloadUploadedDocument(doc._id, doc.documentType)
+                    }
+                  >
                     Download {doc.documentType}
                   </DownloadButton>
                 </DocumentItem>
@@ -267,7 +289,7 @@ export default ServiceDetailsPan;
 // Styled Components
 export const Container = styled(motion.div)`
   padding: 2rem;
-  max-width: 1000px;
+  /* max-width: 1000px; */
   margin: 0 auto;
   background-color: var(--color-bg);
 `;
@@ -289,7 +311,7 @@ export const Title = styled.h1`
 export const DetailsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  gap: 0.5rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -298,7 +320,7 @@ export const DetailsGrid = styled.div`
 
 export const ServiceDetailsSection = styled.div`
   background-color: var(--color-surface);
-  border-radius: 12px;
+  /* border-radius: 12px; */
   padding: 1.5rem;
   border: 1px solid var(--color-border-light);
 `;
@@ -477,4 +499,31 @@ export const PDFPlaceholder = styled.div`
   gap: 0.5rem;
   padding: 1rem;
   text-align: center;
+`;
+const InfoTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+`;
+
+const InfoLabel = styled.td`
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  width: 30%; /* Keeps labels aligned */
+  vertical-align: top;
+`;
+
+const InfoValue = styled.td`
+  padding: 0.75rem 0;
+  padding-left: 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text);
+  font-weight: 600;
+  vertical-align: top;
 `;

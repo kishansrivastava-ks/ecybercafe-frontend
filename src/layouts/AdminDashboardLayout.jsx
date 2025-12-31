@@ -92,22 +92,22 @@ const AdminDashboardLayout = () => {
             <Layers size={20} />
             <span>Services</span>
           </NavItem>
-          <NavItem to="/admin/users" onClick={closeSidebarOnMobile}>
+          {/* <NavItem to="/admin/users" onClick={closeSidebarOnMobile}>
             <Users size={20} />
             <span>Users</span>
           </NavItem>
           <NavItem to="/admin/settings" onClick={closeSidebarOnMobile}>
             <Settings size={20} />
             <span>Settings</span>
-          </NavItem>
+          </NavItem> */}
         </Navigation>
 
         <SupportSection>
           <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
-          <SupportButton>
+          {/* <SupportButton>
             <HelpCircle size={20} />
             <span>Support</span>
-          </SupportButton>
+          </SupportButton> */}
         </SupportSection>
       </Sidebar>
 

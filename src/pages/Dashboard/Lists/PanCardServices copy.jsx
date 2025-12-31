@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
-import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { errorToast, successToast } from "../../../utils/ToastNotfications";
 import axiosInstance from "../../../api/axiosInstance";
 
@@ -93,39 +93,15 @@ const PanCardServices = () => {
     setShowDeleteAllConfirmation(false);
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 10;
-
-  const processedServices =
+  // Filter services based on selected status
+  const filteredServices =
     !isLoading && !error && data
-      ? data
-          .filter((service) => {
-            return (
-              selectedStatus === "All" || service.status === selectedStatus
-            );
-          })
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort Descending
+      ? data.filter((service) => {
+          const matchesStatus =
+            selectedStatus === "All" || service.status === selectedStatus;
+          return matchesStatus;
+        })
       : [];
-
-  const totalPages = Math.ceil(processedServices.length / ITEMS_PER_PAGE);
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-
-  const currentServices = processedServices.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
-
-  const handleFilterChange = (status) => {
-    setSelectedStatus(status);
-    setCurrentPage(1); // Reset to page 1 to avoid empty views
-  };
 
   return (
     <Container
@@ -141,25 +117,25 @@ const PanCardServices = () => {
           <FilterTabs>
             <FilterTab
               active={selectedStatus === "All"}
-              onClick={() => handleFilterChange("All")}
+              onClick={() => setSelectedStatus("All")}
             >
               All
             </FilterTab>
             <FilterTab
               active={selectedStatus === "completed"}
-              onClick={() => handleFilterChange("completed")}
+              onClick={() => setSelectedStatus("completed")}
             >
               Completed
             </FilterTab>
             <FilterTab
               active={selectedStatus === "pending"}
-              onClick={() => handleFilterChange("pending")}
+              onClick={() => setSelectedStatus("pending")}
             >
               Pending
             </FilterTab>
             <FilterTab
               active={selectedStatus === "in_progress"}
-              onClick={() => handleFilterChange("in_progress")}
+              onClick={() => setSelectedStatus("in_progress")}
             >
               In Progress
             </FilterTab>
@@ -171,7 +147,7 @@ const PanCardServices = () => {
         <DeleteAllButton
           onClick={handleDeleteAll}
           disabled={
-            isLoading || (processedServices && processedServices.length === 0)
+            isLoading || (filteredServices && filteredServices.length === 0)
           }
         >
           Delete All PanCard Services
@@ -183,13 +159,13 @@ const PanCardServices = () => {
         <LoadingMessage>Loading PanCard services...</LoadingMessage>
       )}
       {error && <ErrorMessage>Error fetching PanCard services</ErrorMessage>}
-      {!isLoading && !error && processedServices.length === 0 && (
+      {!isLoading && !error && filteredServices.length === 0 && (
         <EmptyState>
           No PanCard services found matching the selected filters.
         </EmptyState>
       )}
 
-      {!isLoading && !error && processedServices.length > 0 && (
+      {!isLoading && !error && filteredServices.length > 0 && (
         <TableContainer>
           <Table>
             <TableHeader>
@@ -203,7 +179,7 @@ const PanCardServices = () => {
               </tr>
             </TableHeader>
             <tbody>
-              {currentServices.map((service) => (
+              {filteredServices.map((service) => (
                 <TableRow
                   key={service._id}
                   whileHover={{
@@ -258,28 +234,6 @@ const PanCardServices = () => {
             </tbody>
           </Table>
         </TableContainer>
-      )}
-
-      {totalPages > 1 && (
-        <PaginationContainer>
-          <PageButton
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            {`<`}
-            {/* <ChevronLeft size={20} /> */}
-          </PageButton>
-          <PageInfo>
-            Page {currentPage} of {totalPages}
-          </PageInfo>
-          <PageButton
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            {/* <ChevronRight size={20} /> */}
-            {`>`}
-          </PageButton>
-        </PaginationContainer>
       )}
 
       {deleteConfirmation && (
@@ -629,45 +583,4 @@ const DeleteConfirmButton = styled.button`
     opacity: 0.7;
     cursor: not-allowed;
   }
-`;
-
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-`;
-
-const PageButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  /* border-radius: 50%; */
-  border: 1px solid var(--color-border-light);
-  background-color: var(--color-surface);
-  color: black;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  /* border: 2px solid red; */
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-surface-secondary);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: var(--color-bg);
-  }
-`;
-
-const PageInfo = styled.span`
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
 `;

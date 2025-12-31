@@ -94,28 +94,21 @@ const DashboardLayout = () => {
           )}
         </SidebarHeader>
 
-        <UserProfile>
+        {/* <UserProfile>
           <UserAvatar>{user?.name?.charAt(0).toUpperCase()}</UserAvatar>
           <UserInfo>
             <UserName>{user?.name.toUpperCase()}</UserName>
             <UserEmail>{user?.email}</UserEmail>
           </UserInfo>
-        </UserProfile>
+        </UserProfile> */}
 
         <NavLinks>
-          <StyledLink
-            to="/dashboard/profile"
-            onClick={() => isMobile && setSidebarOpen(false)}
-          >
-            <User size={20} />
-            Profile
-          </StyledLink>
           <StyledLink
             to="/dashboard/services"
             onClick={() => isMobile && setSidebarOpen(false)}
           >
             <Grid size={20} />
-            My Services
+            Services
           </StyledLink>
 
           {/* PAN Card Dropdown */}
@@ -282,9 +275,9 @@ const DashboardLayout = () => {
               <HeaderTitle $isMobile={isMobile}>
                 Welcome, {user?.name}
               </HeaderTitle>
-              <HeaderSubtitle>
+              {/* <HeaderSubtitle>
                 Here's an overview of your dashboard
-              </HeaderSubtitle>
+              </HeaderSubtitle> */}
             </div>
             <HeaderActions>
               <ThemeToggle />
@@ -300,6 +293,12 @@ const DashboardLayout = () => {
                     onMouseEnter={() => setShowDropdown(true)}
                     onMouseLeave={() => setShowDropdown(false)}
                   >
+                    <DropdownItem
+                      onClick={() => navigate("/dashboard/profile")}
+                    >
+                      <User size={16} />
+                      <span>Profile</span>
+                    </DropdownItem>
                     <DropdownItem onClick={handleLogout}>
                       <LogOut size={16} />
                       <span>Logout</span>
@@ -451,9 +450,9 @@ const Container = styled.div`
 `;
 
 const Sidebar = styled(motion.aside)`
-  /* width: 280px; */
-  width: max-content;
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  width: 280px;
+  /* background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); */
+  background: linear-gradient(135deg, #122e52 0%, #0b163d 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -488,8 +487,9 @@ const HomeLink = styled(NavLink)`
 
 const Logo = styled.h1`
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 300;
   color: white;
+  margin-top: 0.5rem;
 `;
 
 const UserProfile = styled.div`
@@ -550,7 +550,7 @@ const StyledLink = styled(Link)`
   gap: 1rem;
   color: white;
   text-decoration: none;
-  padding: 0.75rem 1rem;
+  padding: 0.3rem 1rem;
   border-radius: 8px;
   font-size: 1rem;
   transition: background 0.3s ease;
@@ -652,9 +652,9 @@ const UserDropdownContainer = styled.div`
 
 const DropdownMenu = styled.div`
   position: absolute;
-  top: 85%;
-  right: 0;
-  margin-top: 0.5rem;
+  /* top: 85%; */
+  right: -50%;
+  /* margin-top: 0.5rem; */
   background-color: var(--color-surface);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

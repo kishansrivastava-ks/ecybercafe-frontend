@@ -54,6 +54,7 @@ import JobCardServices from "../pages/Dashboard/Lists/JobCardServices";
 import ASDITR from "../pages/AdminDashboard/ASDITR";
 import ApplyITR from "../pages/Services/ApplyITR";
 import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
+import PaymentStatus from "../pages/PaymentStatus";
 
 const AppRoutes = () => {
   return (
@@ -133,6 +134,8 @@ const AppRoutes = () => {
             />
           </Route>
         </Route>
+
+        <Route path="/payment-status" element={<PaymentStatus />} />
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin-dashboard" element={<AdminDashboardLayout />}>

@@ -1,17 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import {
-  Eye,
-  CheckCircle,
-  Clock,
-  XCircle,
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Eye, CheckCircle, Clock, XCircle, ArrowLeft } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
 
 const ServicesPan = () => {
@@ -43,40 +34,10 @@ const ServicesPan = () => {
     navigate(`/admin-dashboard/service/pan/${serviceId}`);
   };
 
-  // --- NEW: Pagination State ---
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 10;
-
-  // --- UPDATED: Filter, Sort, and Pagination Logic ---
-  // 1. Filter by status
-  // 2. Sort by Date (Newest First)
-  const processedServices = (
+  const filteredServices =
     statusFilter === "All"
       ? services
-      : services.filter((s) => s.status === statusFilter)
-  ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  // 3. Pagination Slicing
-  const totalPages = Math.ceil(processedServices.length / ITEMS_PER_PAGE);
-  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
-  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
-
-  // Use this variable in your table map
-  const currentServices = processedServices.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
-
-  // Reset page on filter change (Update your existing filter map or use useEffect)
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [statusFilter]);
+      : services.filter((s) => s.status === statusFilter);
 
   return (
     <Container
@@ -89,67 +50,43 @@ const ServicesPan = () => {
           <ArrowLeft size={18} />
         </BackButton>
         <Title>PAN Card Services</Title>
-        <ServiceCount>{currentServices.length} Services</ServiceCount>
+        <ServiceCount>{filteredServices.length} Services</ServiceCount>
       </HeaderContainer>
 
       <FilterContainer>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          {["All", "completed", "pending", "in_progress"].map((status) => (
-            <FilterButton
-              key={status}
-              active={statusFilter === status}
-              onClick={() => setStatusFilter(status)}
-            >
-              {status}
-            </FilterButton>
-          ))}
-        </div>
-        {totalPages > 1 && (
-          <PaginationContainer>
-            <PageButton
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              {`<`}
-            </PageButton>
-            <PageInfo>
-              Page {currentPage} of {totalPages}
-            </PageInfo>
-            <PageButton
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              {`>`}
-            </PageButton>
-          </PaginationContainer>
-        )}
+        {["All", "completed", "pending", "in_progress"].map((status) => (
+          <FilterButton
+            key={status}
+            active={statusFilter === status}
+            onClick={() => setStatusFilter(status)}
+          >
+            {status}
+          </FilterButton>
+        ))}
       </FilterContainer>
 
       {isLoading && <LoadingMessage>Loading services...</LoadingMessage>}
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
-      {!isLoading && !error && currentServices.length === 0 && (
+      {!isLoading && !error && filteredServices.length === 0 && (
         <EmptyState>
           <EmptyIcon>📋</EmptyIcon>
           <p>No PAN card services available.</p>
         </EmptyState>
       )}
 
-      {!isLoading && !error && currentServices.length > 0 && (
+      {!isLoading && !error && filteredServices.length > 0 && (
         <TableContainer>
           <ServiceTable>
             <thead>
               <tr>
                 <th>Applicant</th>
-                <th>Full Name</th>
-                <th>Mobile Number</th>
-                <th>Aadhar Number</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentServices.map((service) => (
+              {filteredServices.map((service) => (
                 <ServiceRow
                   key={service._id}
                   whileHover={{
@@ -166,9 +103,6 @@ const ServicesPan = () => {
                       {service.user.name}
                     </UserInfo>
                   </td>
-                  <td>{service.specificService?.fullName || "N/A"}</td>
-                  <td>{service.specificService?.mobileNumber || "N/A"}</td>
-                  <td>{service.specificService?.aadharNumber || "N/A"}</td>
                   <td>
                     <StatusBadge status={service.status}>
                       {getStatusIcon(service.status)}
@@ -189,25 +123,6 @@ const ServicesPan = () => {
           </ServiceTable>
         </TableContainer>
       )}
-      {/* {totalPages > 1 && (
-        <PaginationContainer>
-          <PageButton
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            {`<`}
-          </PageButton>
-          <PageInfo>
-            Page {currentPage} of {totalPages}
-          </PageInfo>
-          <PageButton
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            {`>`}
-          </PageButton>
-        </PaginationContainer>
-      )} */}
     </Container>
   );
 };
@@ -256,10 +171,8 @@ const ServiceCount = styled.div`
 
 const FilterContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
-  /* margin-bottom: 1.5rem; */
+  margin-bottom: 1.5rem;
 `;
 
 const FilterButton = styled.button`
@@ -410,44 +323,4 @@ const ActionButton = styled.button`
     /* color: var(--color-primary-dark); */
     color: white;
   }
-`;
-
-const PaginationContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-bottom: 1rem;
-`;
-
-const PageButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--color-border-light);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background-color: var(--color-surface-secondary);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: var(--color-bg);
-  }
-`;
-
-const PageInfo = styled.span`
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  font-weight: 500;
 `;

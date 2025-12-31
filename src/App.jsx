@@ -26,6 +26,7 @@ function App() {
           />
         </ThemeProvider>
       </AuthProvider>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }

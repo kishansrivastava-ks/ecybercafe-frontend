@@ -40,7 +40,7 @@ const ASDPan = () => {
     },
   });
 
-  console.log(service);
+  console.log("Current Service", service);
 
   // Update Status Mutation
   const updateStatusMutation = useMutation({
@@ -163,25 +163,39 @@ const ASDPan = () => {
       </Header>
 
       {/* User and Service Basic Information */}
-      <DetailsGrid>
-        <DetailCard>
-          <DetailLabel>Applicant</DetailLabel>
-          <DetailValue>
-            <UserAvatar>{service.user.name.charAt(0).toUpperCase()}</UserAvatar>
-            {service.user.name}
-          </DetailValue>
-        </DetailCard>
-
-        <DetailCard>
-          <DetailLabel>Service Type</DetailLabel>
-          <DetailValue>{service.serviceType}</DetailValue>
-        </DetailCard>
-
-        <DetailCard>
-          <DetailLabel>Email</DetailLabel>
-          <DetailValue>{service.user.email}</DetailValue>
-        </DetailCard>
-      </DetailsGrid>
+      {/* User and Service Basic Information */}
+      <ServiceDetailsSection>
+        <SectionTitle>
+          <User size={20} />
+          Basic Information
+        </SectionTitle>
+        <InfoTable>
+          <tbody>
+            <tr>
+              <InfoLabel>Applicant</InfoLabel>
+              <InfoValue>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  {service.user.name}
+                </div>
+              </InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Service Type</InfoLabel>
+              <InfoValue>{service.serviceType}</InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Email</InfoLabel>
+              <InfoValue>{service.user.email}</InfoValue>
+            </tr>
+          </tbody>
+        </InfoTable>
+      </ServiceDetailsSection>
 
       {/* Detailed Service Information */}
       <ServiceDetailsSection>
@@ -189,35 +203,38 @@ const ASDPan = () => {
           <IdCard size={20} />
           Service Specific Details
         </SectionTitle>
-        <DetailGrid>
-          <DetailItem>
-            <User size={16} />
-            <strong>Full Name:</strong> {service.specificService.fullName}
-          </DetailItem>
-          <DetailItem>
-            <Calendar size={16} />
-            <strong>Date of Birth:</strong>{" "}
-            {new Date(service.specificService.dateOfBirth).toLocaleDateString()}
-          </DetailItem>
-          <DetailItem>
-            <User size={16} />
-            <strong>Father's Name:</strong> {service.specificService.fatherName}
-          </DetailItem>
-          <DetailItem>
-            <Phone size={16} />
-            <strong>Mobile Number:</strong>{" "}
-            {service.specificService.mobileNumber}
-          </DetailItem>
-          <DetailItem>
-            <IdCard size={16} />
-            <strong>Aadhar Number:</strong>{" "}
-            {service.specificService.aadharNumber}
-          </DetailItem>
-          <DetailItem>
-            <MapPin size={16} />
-            <strong>Address:</strong> {service.specificService.address}
-          </DetailItem>
-        </DetailGrid>
+        <InfoTable>
+          <tbody>
+            <tr>
+              <InfoLabel>Full Name</InfoLabel>
+              <InfoValue>{service.specificService.fullName}</InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Date of Birth</InfoLabel>
+              <InfoValue>
+                {new Date(
+                  service.specificService.dateOfBirth
+                ).toLocaleDateString()}
+              </InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Father's Name</InfoLabel>
+              <InfoValue>{service.specificService.fatherName}</InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Mobile Number</InfoLabel>
+              <InfoValue>{service.specificService.mobileNumber}</InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Aadhar Number</InfoLabel>
+              <InfoValue>{service.specificService.aadharNumber}</InfoValue>
+            </tr>
+            <tr>
+              <InfoLabel>Address</InfoLabel>
+              <InfoValue>{service.specificService.address}</InfoValue>
+            </tr>
+          </tbody>
+        </InfoTable>
       </ServiceDetailsSection>
 
       {/* Document Images */}
@@ -466,8 +483,8 @@ const DocumentSection = styled.div`
 
 const DocumentGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 `;
 
 const DocumentItem = styled.div`
@@ -878,6 +895,32 @@ const PDFPlaceholder = styled.div`
   gap: 0.5rem;
   padding: 1rem;
   text-align: center;
+`;
+const InfoTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+`;
+
+const InfoLabel = styled.td`
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-light, #eee);
+  color: var(--color-text-secondary, #666);
+  font-weight: 600;
+  width: 35%;
+  background-color: rgba(0, 0, 0, 0.02);
+  vertical-align: middle;
+`;
+
+const InfoValue = styled.td`
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-light, #eee);
+  color: var(--color-text, #333);
+  font-weight: 500;
+  vertical-align: middle;
 `;
 
 export default ASDPan;

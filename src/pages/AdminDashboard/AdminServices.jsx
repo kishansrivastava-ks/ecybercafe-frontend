@@ -11,6 +11,8 @@ const AdminServices = () => {
   const [selectedServiceType, setSelectedServiceType] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
 
+  console.log("Services:", services);
+
   // Filter services based on selected filters
   const filteredServices =
     !isLoading && !error && services
@@ -115,9 +117,9 @@ const AdminServices = () => {
                   <td>
                     <UserInfo>
                       <UserAvatar>
-                        {service.user.name.charAt(0).toUpperCase()}
+                        {service?.user?.name.charAt(0).toUpperCase() || "user"}
                       </UserAvatar>
-                      {service.user.name}
+                      {service?.user?.name || "user"}
                     </UserInfo>
                   </td>
                   <td>{service.serviceType}</td>
