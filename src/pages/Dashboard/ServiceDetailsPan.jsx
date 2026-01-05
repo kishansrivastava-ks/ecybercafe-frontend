@@ -248,7 +248,7 @@ const ServiceDetailsPan = () => {
                   />
                   <DownloadButton
                     onClick={() =>
-                      downloadUploadedDocument(doc._id, doc.documentType)
+                      downloadUploadedDocument(doc._id, doc.originalName)
                     }
                   >
                     Download {doc.documentType}
