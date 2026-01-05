@@ -133,34 +133,6 @@ const ASDPan = () => {
     }
   };
 
-  const downloadProcessed = async (type) => {
-    try {
-      const response = await axiosInstance.get(
-        `/services/${id}/download-processed/${type}`, // Hit the new route
-        {
-          responseType: "blob", // Important: We expect a binary file
-        }
-      );
-
-      // Create a URL for the blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-
-      // Create temporary link to trigger download
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${type}_processed.jpg`);
-      document.body.appendChild(link);
-      link.click();
-
-      // Cleanup
-      link.parentNode.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed:", error);
-      alert(`Failed to download processed ${type}`);
-    }
-  };
-
   if (isLoading)
     return (
       <LoadingContainer>
@@ -273,7 +245,6 @@ const ASDPan = () => {
           Uploaded Documents
         </SectionTitle>
         <DocumentGrid>
-          {/* 1. Photo Button */}
           <DocumentItem>
             <DocumentLabel>Profile Photo</DocumentLabel>
             <DocumentImage
@@ -282,11 +253,19 @@ const ASDPan = () => {
               }`}
               alt="Profile Photo"
             />
-            <DownloadButton onClick={() => downloadProcessed("photo")}>
-              Download (213px / 300dpi)
+            <DownloadButton
+              onClick={() =>
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.photoPath
+                  }`,
+                  "profile_photo.jpg"
+                )
+              }
+            >
+              Download
             </DownloadButton>
           </DocumentItem>
-          {/* 2. Signature Button */}
           <DocumentItem>
             <DocumentLabel>Signature</DocumentLabel>
             <DocumentImage
@@ -295,8 +274,17 @@ const ASDPan = () => {
               }`}
               alt="Signature"
             />
-            <DownloadButton onClick={() => downloadProcessed("signature")}>
-              Download (400px / 600dpi)
+            <DownloadButton
+              onClick={() =>
+                downloadDocument(
+                  `${import.meta.env.VITE_API_BASE_URL}${
+                    service.specificService.signaturePath
+                  }`,
+                  "signature.jpg"
+                )
+              }
+            >
+              Download
             </DownloadButton>
           </DocumentItem>
           <DocumentItem>
