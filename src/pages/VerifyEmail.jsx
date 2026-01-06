@@ -13,7 +13,7 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
 
   // Get data from state
-  const { email, name, password } = location.state || {};
+  const { email, name, password, jila, prakhand } = location.state || {};
 
   // OTP Verification Mutation
   const verifyMutation = useMutation({
@@ -32,7 +32,7 @@ const VerifyEmail = () => {
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    verifyMutation.mutate({ email, code: otp, name, password });
+    verifyMutation.mutate({ email, code: otp, name, password, jila, prakhand });
   };
 
   return (

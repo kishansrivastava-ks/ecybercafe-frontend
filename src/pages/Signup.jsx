@@ -4,8 +4,610 @@ import styled from "styled-components";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../api/axiosInstance";
 import { motion } from "framer-motion";
-import { UserPlus, Mail, Lock, Check } from "lucide-react";
+import { UserPlus, Mail, Lock, Check, MapPin } from "lucide-react";
 import { successToast } from "../utils/ToastNotfications";
+
+const locationData = {
+  Araria: [
+    "Araria",
+    "Bhargama",
+    "Forbesganj",
+    "Jokihat",
+    "Kursakanta",
+    "Narpatganj",
+    "Palasi",
+    "Raniganj",
+    "Sikti",
+  ],
+  Arwal: ["Arwal", "Kaler", "Karpi", "Kurtha", "Sonbhadra Banshi Suryapur"],
+  Aurangabad: [
+    "Aurangabad",
+    "Barun",
+    "Daudnagar",
+    "Deo",
+    "Goh",
+    "Haspura",
+    "Kutumba",
+    "Madanpur",
+    "Nabinagar",
+    "Obra",
+    "Rafiganj",
+  ],
+  Banka: [
+    "Amarpur",
+    "Banka",
+    "Barahat",
+    "Belhar",
+    "Bounsi",
+    "Chandan",
+    "Dhauraiya",
+    "Fullidumar",
+    "Katoria",
+    "Rajoun",
+    "Shambhuganj",
+  ],
+  Begusarai: [
+    "Bachhwara",
+    "Bakhri",
+    "Ballia",
+    "Barauni",
+    "Begusarai",
+    "Bhagwanpur",
+    "Birpur",
+    "Cheria Bariyarpur",
+    "Chhaurahi",
+    "Dandari",
+    "Garhpura",
+    "Khodawandpur",
+    "Mansoorchak",
+    "Matihani",
+    "Nawkothi",
+    "Sahebpur Kamal",
+    "Shamho Akha Kurha",
+    "Teghra",
+  ],
+  Bhagalpur: [
+    "Bihpur",
+    "Gopalpur",
+    "Goradih",
+    "Ismailpur",
+    "Jagdishpur",
+    "Kahalgaon",
+    "Kharik",
+    "Narayanpur",
+    "Nathnagar",
+    "Naugachhia",
+    "Pirpainti",
+    "Rangra Chowk",
+    "Sabour",
+    "Sanhaula",
+    "Shahkund",
+    "Sultanganj",
+  ],
+  Bhojpur: [
+    "Agiaon",
+    "Arrah",
+    "Barhara",
+    "Bihiyan",
+    "Charpokhari",
+    "Garhani",
+    "Jagdishpur",
+    "Koilwar",
+    "Piro",
+    "Sahar",
+    "Sandesh",
+    "Shahpur",
+    "Tarari",
+    "Udwantnagar",
+  ],
+  Buxar: [
+    "Brahampur",
+    "Buxar",
+    "Chakki",
+    "Chaugai",
+    "Chausha",
+    "Dumraon",
+    "Itarhi",
+    "Kesath",
+    "Nawanagar",
+    "Rajpur",
+    "Simri",
+  ],
+  Darbhanga: [
+    "Alinagar",
+    "Bahadurpur",
+    "Baheri",
+    "Benipur",
+    "Biraul",
+    "Darbhanga",
+    "Gaura Bauram",
+    "Ghanshyampur",
+    "Hanuman Nagar",
+    "Hayaghat",
+    "Jale",
+    "Keoti",
+    "Kiratpur",
+    "Kusheshwar Asthan",
+    "Kusheshwar Asthan Purbi",
+    "Manigachhi",
+    "Singhwara",
+    "Tardih",
+  ],
+  "East Champaran": [
+    "Adapur",
+    "Areraj",
+    "Banjaria",
+    "Bankatwa",
+    "Chakia",
+    "Chhauradano",
+    "Chiraiya",
+    "Dhaka",
+    "Ghorasahan",
+    "Harsidhi",
+    "Kalyanpur",
+    "Kesaria",
+    "Kotwa",
+    "Madhuban",
+    "Mehsi",
+    "Motihari",
+    "Paharpur",
+    "Pakridayal",
+    "Patahi",
+    "Phenhara",
+    "Piprakothi",
+    "Ramgarhwa",
+    "Raxaul",
+    "Sangrampur",
+    "Sugauli",
+    "Tetaria",
+    "Turkaulia",
+  ],
+  Gaya: [
+    "Amas",
+    "Atri",
+    "BankeyBazar",
+    "Barachatti",
+    "Belaganj",
+    "Bodhgaya",
+    "Dobhi",
+    "Dumaria",
+    "Fatehpur",
+    "Guraru",
+    "Gurua",
+    "Imamganj",
+    "Khizarsarai",
+    "Konch",
+    "Manpur",
+    "Mohanpur",
+    "Mohra",
+    "Nagar",
+    "Neem Chak Bathani",
+    "Paraiya",
+    "Sherghati",
+    "Tankuppa",
+    "Tekari",
+    "Wazirganj",
+  ],
+  Gopalganj: [
+    "Baikunthpur",
+    "Barauli",
+    "Bhorey",
+    "Bijaipur",
+    "Gopalganj",
+    "Hathua",
+    "Katiya",
+    "Kuchaikot",
+    "Manjha",
+    "Pachdeuri",
+    "Phulwaria",
+    "Sidhwalia",
+    "Thawe",
+    "Uchakagaon",
+  ],
+  Jamui: [
+    "Barhat",
+    "Chakai",
+    "Gidhaur",
+    "Islamnagar Aliganj",
+    "Jamui",
+    "Jhajha",
+    "Khaira",
+    "Lakshmipur",
+    "Sikandra",
+    "Sono",
+  ],
+  Jehanabad: [
+    "Ghosi",
+    "Hulasganj",
+    "Jehanabad",
+    "Kako",
+    "Makhdumpur",
+    "Modanganj",
+    "Ratni Faridpur",
+  ],
+  Kaimur: [
+    "Adhaura",
+    "Bhabua",
+    "Bhagwanpur",
+    "Chainpur",
+    "Chand",
+    "Durgawati",
+    "Kudra",
+    "Mohania",
+    "Nuaon",
+    "Ramgarh",
+    "Rampur",
+  ],
+  Katihar: [
+    "Amdabad",
+    "Azamnagar",
+    "Balrampur",
+    "Barari",
+    "Barsoi",
+    "Dandkhora",
+    "Falka",
+    "Hasanganj",
+    "Kadwa",
+    "Katihar",
+    "Korha",
+    "Kursela",
+    "Manihari",
+    "Mansahi",
+    "Pranpur",
+    "Sameli",
+  ],
+  Khagaria: [
+    "Alauli",
+    "Beldaur",
+    "Chautham",
+    "Gogri",
+    "Khagaria",
+    "Mansi",
+    "Parbatta",
+  ],
+  Kishanganj: [
+    "Bahadurganj",
+    "Dighalbank",
+    "Kishanganj",
+    "Kochadhaman",
+    "Pothia",
+    "Terhagachh",
+    "Thakurganj",
+  ],
+  Lakhisarai: [
+    "Barahiya",
+    "Chanan",
+    "Halsi",
+    "Lakhisarai",
+    "Pipariya",
+    "Ramgarh Chowk",
+    "Surajgarha",
+  ],
+  Madhepura: [
+    "Alamnagar",
+    "Bihariganj",
+    "Chausa",
+    "Ghailadh",
+    "Ghamharia",
+    "Gualpara",
+    "Kumarkhand",
+    "Madhepura",
+    "Murliganj",
+    "Puraini",
+    "Shankarpur",
+    "Singheshwar",
+    "Udakishunganj",
+  ],
+  Madhubani: [
+    "Andhratharhi",
+    "Babubarhi",
+    "Basopatti",
+    "Benipatti",
+    "Bisfi",
+    "Ghoghardiha",
+    "Harlakhi",
+    "Jainagar",
+    "Jhanjharpur",
+    "Kaluahi",
+    "Khajauli",
+    "Khutauna",
+    "Ladaniya",
+    "Lakhnaur",
+    "Laukahi",
+    "Madhepur",
+    "Madhwapur",
+    "Pandaul",
+    "Phulparas",
+    "Rahika",
+    "Rajnagar",
+  ],
+  Munger: [
+    "Asarganj",
+    "Bariarpur",
+    "Dharhara",
+    "Haveli Kharagpur",
+    "Jamalpur",
+    "Sadar Munger",
+    "Sangrampur",
+    "Tarapur",
+    "Tetiya Bambar",
+  ],
+  Muzaffarpur: [
+    "Aurai",
+    "Bandra",
+    "Bochaha",
+    "Gayghat",
+    "Kanti",
+    "Katra",
+    "Kurhani",
+    "Marwan",
+    "Minapur",
+    "Motipur",
+    "Muraul",
+    "Mushahari",
+    "Paroo",
+    "Sahebganj",
+    "Sakra",
+    "Saraiya",
+  ],
+  Nalanda: [
+    "Asthawan",
+    "Ben",
+    "Biharsharif",
+    "Bind",
+    "Chandi",
+    "Ekangarsarai",
+    "Giriyak",
+    "Harnaut",
+    "Hilsa",
+    "Islampur",
+    "Karai Parsurai",
+    "Katrisarai",
+    "Nagar Nausa",
+    "Noorsarai",
+    "Parbalpur",
+    "Rahui",
+    "Rajgir",
+    "Sarmera",
+    "Silao",
+    "Tharthari",
+  ],
+  Nawada: [
+    "Akbarpur",
+    "Gobindpur",
+    "Hisua",
+    "Kashichak",
+    "Kawakol",
+    "Meskaur",
+    "Nardiganj",
+    "Narhat",
+    "Nawada",
+    "Pakribarawan",
+    "Rajauli",
+    "Roh",
+    "Sirdala",
+    "Warisaliganj",
+  ],
+  Patna: [
+    "Athmalgola",
+    "Bakhtiarpur",
+    "Barh",
+    "Belchhi",
+    "Bihta",
+    "Bikram",
+    "Danapur",
+    "Daniawan",
+    "Dhanarua",
+    "Dulhin Bajar",
+    "Fatuha",
+    "Ghoswari",
+    "Khusrupur",
+    "Maner",
+    "Masaurhi",
+    "Mokama",
+    "Naubatpur",
+    "Paliganj",
+    "Pandarak",
+    "Patna Sadar",
+    "Patna Sadar (City)",
+    "Phulwari Sharif",
+    "Punpun",
+    "Sampatchak",
+  ],
+  Purnia: [
+    "Amour",
+    "Baisa",
+    "Banmankhi",
+    "Barahara Kothi",
+    "Bhawanipur",
+    "Dagarua",
+    "Dhamdaha",
+    "Jalalgarh",
+    "Kasba",
+    "Krityanand Nagar",
+    "Purnia Purw",
+    "Rupauli",
+    "Srinagar",
+    "Baisi",
+  ],
+  Rohtas: [
+    "Akorhi Gola",
+    "Bikramganj",
+    "Chenari",
+    "Dawath",
+    "Dehri",
+    "Dinara",
+    "Karakat",
+    "Kargahar",
+    "Kochas",
+    "Nasriganj",
+    "Nauhatta",
+    "Nokha",
+    "Rajpur",
+    "Rohtas",
+    "Sanjhauli",
+    "Sasaram",
+    "Sheosagar",
+    "Surajpura",
+    "Tilouthu",
+  ],
+  Saharsa: [
+    "Banma Itahri",
+    "Kahara",
+    "Mahishi",
+    "Nauhatta",
+    "Patarghat",
+    "Salkhua",
+    "Sattar Kataiya",
+    "Simri Bakhtiarpur",
+    "Sonbarsha",
+    "Sour Bazar",
+  ],
+  Samastipur: [
+    "Bibhutipur",
+    "Bithan",
+    "Dalsinghsarai",
+    "Hasanpur",
+    "Kalyanpur",
+    "Khanpur",
+    "Mohanpur",
+    "Mohiuddinnagar",
+    "Morwa",
+    "Patori",
+    "Pusa",
+    "Rosera",
+    "Samastipur",
+    "Sarairanjan",
+    "Shivajinagar",
+    "Singhia",
+    "Tajpur",
+    "Ujiarpur",
+    "Vidyapati Nagar",
+    "Warisnagar",
+  ],
+  Saran: [
+    "Amnour",
+    "Baniapur",
+    "Chapra",
+    "Dariapur",
+    "Dighwara",
+    "Ekma",
+    "Garkha",
+    "Ishuapur",
+    "Jalalpur",
+    "Lahladpur",
+    "Maker",
+    "Manjhi",
+    "Marhaura",
+    "Mashrak",
+    "Nagra",
+    "Panapur",
+    "Parsa",
+    "Rivilganj",
+    "Sonepur",
+    "Taraiya",
+  ],
+  Sheikhpura: [
+    "Ariyari",
+    "Barbigha",
+    "Chewara",
+    "Ghatkusumbha",
+    "Sheikhpura",
+    "Shekhopur Saray",
+  ],
+  Sheohar: ["Dumri Katsari", "Piprarhi", "Purnahiya", "Sheohar", "Tariyani"],
+  Sitamarhi: [
+    "Bairgania",
+    "Bajpatti",
+    "Bathnaha",
+    "Belsand",
+    "Bokhara",
+    "Charaut",
+    "Dumra",
+    "Mejorganj",
+    "Nanpur",
+    "Parihar",
+    "Parsauni",
+    "Pupri",
+    "Riga",
+    "Runnisaidpur",
+    "Sonbarsha",
+    "Suppi",
+    "Sursand",
+  ],
+  Siwan: [
+    "Andar",
+    "Barharia",
+    "Basantpur",
+    "Bhagwanpur Hat",
+    "Darauli",
+    "Duraundha",
+    "Goriakothi",
+    "Guthani",
+    "Hasanpura",
+    "Hussainganj",
+    "Lakri Nabiganj",
+    "Maharajganj",
+    "Mairwa",
+    "Nautan",
+    "Pachrukhi",
+    "Raghunathpur",
+    "Siswan",
+    "Siwan sadar",
+    "Ziradei",
+  ],
+  Supaul: [
+    "Basantpur",
+    "Chhatapur",
+    "Kishanpur",
+    "Marauna",
+    "Nirmali",
+    "Pipra",
+    "Pratapganj",
+    "Raghopur",
+    "Saraigarh Bhaptiyahi",
+    "Supaul",
+    "Triveniganj",
+  ],
+  Vaishali: [
+    "Bhagwanpur",
+    "Bidupur",
+    "Chehara Kala",
+    "Desri",
+    "Goraul",
+    "Hajipur",
+    "Jandaha",
+    "Lalganj",
+    "Mahnar",
+    "Mahua",
+    "Patepur",
+    "Paterhi Belsar",
+    "Raghopur",
+    "Rajapakar",
+    "Sahdei Buzurg",
+    "Vaishali",
+  ],
+  "West Champaran": [
+    "Bagaha - 2",
+    "Bagha - 1",
+    "Bairia",
+    "Bettiah",
+    "Bhitahan",
+    "Chanpatiya",
+    "Gaunaha",
+    "Lauriya",
+    "Madhubani",
+    "Mainatand",
+    "Mazauliya",
+    "Narkatiyaganj",
+    "Nautan",
+    "Piprasi",
+    "Ramnagar",
+    "Sikta",
+    "Thakaraha",
+    "Yogapatti",
+  ],
+};
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +615,8 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    jila: "",
+    prakhand: "",
   });
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -33,6 +637,8 @@ const Signup = () => {
             email: formData.email,
             name: formData.name,
             password: formData.password,
+            jila: formData.jila,
+            prakhand: formData.prakhand,
           },
         });
       }, 2000);
@@ -44,7 +650,14 @@ const Signup = () => {
 
   // Handle input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "jila") {
+      // If Jila changes, update Jila and reset Prakhand
+      setFormData({ ...formData, jila: value, prakhand: "" });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   // Handle form submission
@@ -105,6 +718,57 @@ const Signup = () => {
               </InputWrapper>
             </InputGroup>
 
+            {/* Jila Dropdown */}
+            <InputGroup>
+              <InputWrapper>
+                <InputIcon>
+                  <MapPin size={20} />
+                </InputIcon>
+                <Select
+                  name="jila"
+                  value={formData.jila}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Select Jila (District)
+                  </option>
+                  {Object.keys(locationData).map((jila) => (
+                    <option key={jila} value={jila}>
+                      {jila}
+                    </option>
+                  ))}
+                </Select>
+              </InputWrapper>
+            </InputGroup>
+
+            {/* Prakhand Dropdown */}
+            <InputGroup>
+              <InputWrapper>
+                <InputIcon>
+                  <MapPin size={20} />
+                </InputIcon>
+                <Select
+                  name="prakhand"
+                  value={formData.prakhand}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.jila} // Disable until Jila is picked
+                >
+                  <option value="" disabled>
+                    Select Prakhand (Block)
+                  </option>
+                  {/* Map based on selected Jila */}
+                  {formData.jila &&
+                    locationData[formData.jila]?.map((blk) => (
+                      <option key={blk} value={blk}>
+                        {blk}
+                      </option>
+                    ))}
+                </Select>
+              </InputWrapper>
+            </InputGroup>
+
             <InputGroup>
               <InputWrapper>
                 <InputIcon>
@@ -150,44 +814,6 @@ const Signup = () => {
             </LoginPrompt>
           </Form>
         </FormSection>
-
-        {/* <IllustrationSection>
-          <Illustration>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 600 600"
-              className="w-full h-full"
-            >
-              <defs>
-                <linearGradient
-                  id="signupGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#2563eb" stopOpacity="0.6" />
-                </linearGradient>
-              </defs>
-              <path
-                fill="url(#signupGradient)"
-                d="M300,50 Q500,150 450,300 Q400,450 300,550 Q200,450 150,300 Q100,150 300,50Z"
-              />
-              <text
-                x="300"
-                y="300"
-                textAnchor="middle"
-                alignmentBaseline="middle"
-                fill="white"
-                fontSize="48"
-                fontWeight="bold"
-              >
-                Welcome
-              </text>
-            </svg>
-          </Illustration>
-        </IllustrationSection> */}
       </ContentWrapper>
     </Container>
   );
@@ -388,17 +1014,31 @@ const LoginLink = styled.a`
   }
 `;
 
-const IllustrationSection = styled.div`
-  flex: 1;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const Select = styled.select`
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  background-color: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: 1rem;
+  outline: none;
+  appearance: none; /* Removes default browser arrow to look cleaner */
+  cursor: pointer;
 
-const Illustration = styled.div`
-  width: 80%;
-  height: 80%;
+  &::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  /* Style for the dropdown options */
+  option {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 `;
 
 export default Signup;

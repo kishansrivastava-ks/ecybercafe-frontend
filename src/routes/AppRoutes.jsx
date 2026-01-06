@@ -55,6 +55,7 @@ import ASDITR from "../pages/AdminDashboard/ASDITR";
 import ApplyITR from "../pages/Services/ApplyITR";
 import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
 import PaymentStatus from "../pages/PaymentStatus";
+import Users from "../pages/AdminDashboard/Users";
 
 const AppRoutes = () => {
   return (
@@ -149,6 +150,7 @@ const AppRoutes = () => {
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />
             <Route path="services/rtps" element={<ServicesRtps />} />
+            <Route path="users" element={<Users />} />
           </Route>
         </Route>
 

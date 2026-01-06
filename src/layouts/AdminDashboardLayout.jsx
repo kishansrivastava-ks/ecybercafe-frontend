@@ -92,11 +92,11 @@ const AdminDashboardLayout = () => {
             <Layers size={20} />
             <span>Services</span>
           </NavItem>
-          {/* <NavItem to="/admin/users" onClick={closeSidebarOnMobile}>
+          <NavItem to="/admin-dashboard/users" onClick={closeSidebarOnMobile}>
             <Users size={20} />
             <span>Users</span>
           </NavItem>
-          <NavItem to="/admin/settings" onClick={closeSidebarOnMobile}>
+          {/* <NavItem to="/admin/settings" onClick={closeSidebarOnMobile}>
             <Settings size={20} />
             <span>Settings</span>
           </NavItem> */}
