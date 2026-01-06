@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  // 1. Add a loading state to track the initial auth check.
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,14 +17,17 @@ export const AuthProvider = ({ children }) => {
       if (storedUser && storedToken) {
         setUser(storedUser);
         setToken(storedToken);
+        // Set the default authorization header for all subsequent axios requests
         axiosInstance.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${storedToken}`;
       }
     } catch (error) {
+      // If there's an error (e.g., malformed JSON), clear storage
       console.error("Error loading auth from storage:", error);
       logout();
     } finally {
+      // 2. Set loading to false after the check is complete.
       setLoading(false);
     }
   }, []);
@@ -45,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 
       return res.data;
     } catch (error) {
+      // It's better to let the component handle the error toast/message
       throw error.response?.data || new Error("Login failed");
     }
   };
@@ -57,25 +62,12 @@ export const AuthProvider = ({ children }) => {
     delete axiosInstance.defaults.headers.common["Authorization"];
   };
 
-  // --- NEW FUNCTION: Handles updates to user data (Profile Edit) ---
-  const updateUser = (userData) => {
-    // 1. Update React State (Immediate UI update)
-    setUser(userData);
-
-    // 2. Update Local Storage (Persist update on refresh)
-    // We assume userData is the full user object.
-    // If your backend returns only changed fields, you might need:
-    // localStorage.setItem("user", JSON.stringify({ ...user, ...userData }));
-    localStorage.setItem("user", JSON.stringify(userData));
-  };
-
   const authContextValue = {
     user,
-    token,
-    loading,
+    token, // It's good practice to expose the token as well
+    loading, // 3. Expose the loading state
     login,
     logout,
-    updateUser, // <--- EXPOSED HERE
   };
 
   return (
