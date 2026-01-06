@@ -56,6 +56,8 @@ import ApplyITR from "../pages/Services/ApplyITR";
 import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
 import PaymentStatus from "../pages/PaymentStatus";
 import Users from "../pages/AdminDashboard/Users";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
 
 const AppRoutes = () => {
   return (
@@ -66,6 +68,8 @@ const AppRoutes = () => {
           <Route path="login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route path="/services">
             <Route path="" element={<Services />} />
