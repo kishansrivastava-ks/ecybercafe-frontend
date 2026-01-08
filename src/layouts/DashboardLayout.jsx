@@ -14,6 +14,7 @@ import {
   CreditCard,
   FileText,
   Briefcase,
+  Wallet,
 } from "lucide-react";
 import ThemeToggle from "../utils/ThemeToggle";
 import { ChevronDown } from "lucide-react";
@@ -23,10 +24,10 @@ const DashboardLayout = () => {
   // const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   const [isPanOpen, setIsPanOpen] = useState(false);
-  const [isRtpsOpen, setIsRtpsOpen] = useState(false);
-  const [isJobCardOpen, setIsJobCardOpen] = useState(false);
+  // const [isRtpsOpen, setIsRtpsOpen] = useState(false);
+  // const [isJobCardOpen, setIsJobCardOpen] = useState(false);
 
-  const [isItrOpen, setIsItrOpen] = useState(false);
+  // const [isItrOpen, setIsItrOpen] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
@@ -149,6 +150,12 @@ const DashboardLayout = () => {
             )}
           </ServiceDropdown>
 
+          {/* Wallet */}
+          <StyledLink to="/dashboard/wallet">
+            <Wallet size={20} />
+            Wallet
+          </StyledLink>
+
           {/* RTPS Dropdown */}
           {/* <ServiceDropdown>
             <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
@@ -226,7 +233,7 @@ const DashboardLayout = () => {
           </ServiceDropdown> */}
 
           {/* ITR Service Dropdown */}
-          <ServiceDropdown>
+          {/* <ServiceDropdown>
             <div onClick={() => setIsItrOpen(!isItrOpen)}>
               <FileText size={20} />
               ITR Service
@@ -252,7 +259,7 @@ const DashboardLayout = () => {
                 </StyledLink>
               </DropdownContent>
             )}
-          </ServiceDropdown>
+          </ServiceDropdown> */}
         </NavLinks>
 
         <LogoutSection>
