@@ -84,10 +84,12 @@ const DashboardLayout = () => {
       >
         <SidebarHeader>
           <LogoContainer>
-            <HomeLink to={"/"}>
+            {/* <HomeLink to={"/"}>
               <Home size={28} />
-            </HomeLink>
-            <Logo>Dashboard</Logo>
+            </HomeLink> */}
+            <Logo onClick={() => navigate("/dashboard/services")}>
+              Dashboard
+            </Logo>
           </LogoContainer>
 
           {isMobile && (
@@ -420,8 +422,11 @@ const HomeLink = styled(NavLink)`
 const Logo = styled.h1`
   font-size: 1.5rem;
   font-weight: 300;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  margin-top: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
 `;
 
 const UserProfile = styled.div`
@@ -590,7 +595,7 @@ const DropdownMenu = styled.div`
   background-color: var(--color-surface);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 150px;
+  min-width: 100px;
   z-index: 100;
   overflow: hidden;
   border: 1px solid var(--color-border-light);
@@ -600,8 +605,9 @@ const DropdownItem = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   color: var(--color-text);
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
 

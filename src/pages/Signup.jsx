@@ -699,6 +699,7 @@ const Signup = () => {
                   placeholder="Full Name"
                   required
                   onChange={handleChange}
+                  style={{ paddingLeft: "2.5rem" }}
                 />
               </InputWrapper>
             </InputGroup>
@@ -842,7 +843,7 @@ const ContentWrapper = styled(motion.div)`
 
   @media (min-width: 768px) {
     width: 50%;
-    max-width: 1200px;
+    /* max-width: 1200px; */
   }
 `;
 
@@ -1017,12 +1018,9 @@ const LoginLink = styled.a`
 const Select = styled.select`
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
-  background-color: transparent;
-  border: none;
+  border: 1px solid #d1d5db;
   color: var(--color-text);
   font-size: 1rem;
-  outline: none;
-  appearance: none; /* Removes default browser arrow to look cleaner */
   cursor: pointer;
 
   &::placeholder {

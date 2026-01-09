@@ -66,7 +66,7 @@ const Footer = () => {
           </FooterLinks>
         </FooterColumn>
 
-        <FooterColumn>
+        {/* <FooterColumn>
           <FooterColumnTitle>Contact Info</FooterColumnTitle>
           <ContactInfo>
             <ContactDetail>
@@ -76,7 +76,7 @@ const Footer = () => {
             <ContactDetail>helpecybercafe@gmail.com</ContactDetail>
             <ContactDetail>+91 7091361502</ContactDetail>
           </ContactInfo>
-        </FooterColumn>
+        </FooterColumn> */}
       </FooterContent>
 
       <CopyrightSection>
@@ -96,7 +96,7 @@ const FooterContent = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 2rem;
   margin-bottom: 3rem;
 

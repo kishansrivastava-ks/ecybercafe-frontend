@@ -8,10 +8,10 @@ function Home() {
   return (
     <>
       <HeroSection />
-      <ServicesOverview />
-      <AboutUsSection />
-      <ContactUsSection />
-      <Footer />
+      {/* <ServicesOverview /> */}
+      {/* <AboutUsSection /> */}
+      {/* <ContactUsSection /> */}
+      {/* <Footer /> */}
     </>
   );
 }

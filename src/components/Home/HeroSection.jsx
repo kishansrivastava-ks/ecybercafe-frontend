@@ -31,12 +31,12 @@ const HeroSection = () => {
           </Subheadline>
 
           <ButtonGroup>
-            <Button variant="primary" onClick={handleGetStarted}>
-              Get Started
+            <Button variant="primary" onClick={() => navigate("/login")}>
+              Login
               <ArrowRight size={20} />
             </Button>
-            <Button variant="outline" onClick={() => navigate("/how-it-works")}>
-              Learn More
+            <Button variant="outline" onClick={() => navigate("/signup")}>
+              SignUp
             </Button>
           </ButtonGroup>
 

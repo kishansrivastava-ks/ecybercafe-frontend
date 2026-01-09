@@ -43,7 +43,7 @@ const ContactUsSection = () => {
         </SectionHeader>
 
         <ContactContent>
-          <ContactInfoColumn>
+          {/* <ContactInfoColumn>
             <ContactInfoCard>
               <IconWrapper $color="var(--color-primary)">
                 <Mail size={40} color="var(--color-primary)" />
@@ -60,7 +60,7 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Phone</ContactTitle>
-                <ContactDetail>+91 7091361502</ContactDetail>
+                <ContactDetail>+91 9876543210</ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
 
@@ -70,13 +70,10 @@ const ContactUsSection = () => {
               </IconWrapper>
               <ContactInfo>
                 <ContactTitle>Address</ContactTitle>
-                <ContactDetail>
-                  POST OFFICE AHIYAPUR, SH 69, Dakshin Bihar Gramin Bank, TEHSIL
-                  KONCH, Gangti, Gaya, Bihar, 824207
-                </ContactDetail>
+                <ContactDetail>Address</ContactDetail>
               </ContactInfo>
             </ContactInfoCard>
-          </ContactInfoColumn>
+          </ContactInfoColumn> */}
 
           <ContactFormColumn>
             {!submitted ? (
@@ -177,7 +174,7 @@ const Subheadline = styled.p`
 
 const ContactContent = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 3rem;
   width: 100%;
 
