@@ -15,6 +15,7 @@ import {
   FileText,
   Briefcase,
   Wallet,
+  IdCard,
 } from "lucide-react";
 import ThemeToggle from "../utils/ThemeToggle";
 import { ChevronDown } from "lucide-react";
@@ -25,7 +26,7 @@ const DashboardLayout = () => {
   // const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   const [isPanOpen, setIsPanOpen] = useState(false);
-  // const [isRtpsOpen, setIsRtpsOpen] = useState(false);
+  const [isVoterOpen, setIsVoterOpen] = useState(false);
   // const [isJobCardOpen, setIsJobCardOpen] = useState(false);
 
   // const [isItrOpen, setIsItrOpen] = useState(false);
@@ -144,6 +145,44 @@ const DashboardLayout = () => {
                   }}
                 >
                   List PAN Card
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown>
+
+          {/* Voter Card Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsVoterOpen(!isVoterOpen)}>
+              <IdCard size={20} />
+              Voter ID
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isPanOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isVoterOpen && (
+              <DropdownContent>
+                <StyledLink
+                  to="/dashboard/services/voter-card"
+                  onClick={() => {
+                    setIsVoterOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  Apply Voter Card
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/voter-card/list"
+                  onClick={() => {
+                    setIsVoterOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List Voter Card
                 </StyledLink>
               </DropdownContent>
             )}

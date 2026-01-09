@@ -82,10 +82,10 @@ const AdminDashboardLayout = () => {
         </LogoContainer>
 
         <Navigation>
-          <NavItem to="/admin-dashboard" end onClick={closeSidebarOnMobile}>
+          {/* <NavItem to="/admin-dashboard" end onClick={closeSidebarOnMobile}>
             <Home size={20} />
             <span>Dashboard</span>
-          </NavItem>
+          </NavItem> */}
           <NavItem
             to="/admin-dashboard/services"
             onClick={closeSidebarOnMobile}

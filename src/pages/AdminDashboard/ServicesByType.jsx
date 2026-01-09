@@ -13,15 +13,20 @@ const ServicesByType = () => {
       route: "/admin-dashboard/services/pan",
     },
     {
-      title: "Job Card",
-      description: "Access job card services and details here.",
-      route: "/admin-dashboard/services/job-card",
+      title: "Voter ID Card",
+      description: "Apply and manage your Voter services seamlessly.",
+      route: "/admin-dashboard/services/voter-card",
     },
-    {
-      title: "RTPS",
-      description: "RTPS related services and requests.",
-      route: "/admin-dashboard/services/rtps",
-    },
+    // {
+    //   title: "Job Card",
+    //   description: "Access job card services and details here.",
+    //   route: "/admin-dashboard/services/job-card",
+    // },
+    // {
+    //   title: "RTPS",
+    //   description: "RTPS related services and requests.",
+    //   route: "/admin-dashboard/services/rtps",
+    // },
   ];
 
   return (
@@ -43,7 +48,7 @@ const ServicesByType = () => {
             onClick={() => navigate(card.route)}
           >
             <CardTitle>{card.title}</CardTitle>
-            <CardDescription>{card.description}</CardDescription>
+            {/* <CardDescription>{card.description}</CardDescription> */}
           </ServiceCard>
         ))}
       </CardGrid>
@@ -85,14 +90,13 @@ const ServiceCard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 200px;
+  /* min-height: 200px; */
 `;
 
 const CardTitle = styled.h3`
   font-size: 1.5rem;
   color: var(--color-primary);
   font-weight: 600;
-  margin-bottom: 1rem;
 `;
 
 const CardDescription = styled.p`

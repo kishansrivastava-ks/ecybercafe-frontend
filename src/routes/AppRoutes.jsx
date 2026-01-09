@@ -61,6 +61,9 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 import Wallet from "../pages/Dashboard/WalletPages/Wallet";
 import PaymentStatus from "../pages/Dashboard/WalletPages/PaymentStatus";
 import AdminWalletDashboard from "../pages/AdminDashboard/AdminWalletDashboard";
+import ApplyVoterCard from "../pages/Dashboard/Applications/ApplyVoterCard";
+import VoterCardList from "../pages/Dashboard/Lists/VoterCardList";
+import AdminVoterServices from "../pages/AdminDashboard/AdminVoterServices";
 
 const AppRoutes = () => {
   return (
@@ -119,6 +122,12 @@ const AppRoutes = () => {
             <Route path="services/rtps" element={<ApplyRtps />} />
             <Route path="services/rtps/list" element={<RTPSServices />} />
 
+            <Route path="services/voter-card" element={<ApplyVoterCard />} />
+            <Route
+              path="services/voter-card/list"
+              element={<VoterCardList />}
+            />
+
             <Route path="services/job-card" element={<ApplyJobCard />} />
             <Route
               path="services/job-card/list"
@@ -150,16 +159,19 @@ const AppRoutes = () => {
 
         <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin-dashboard" element={<AdminDashboardLayout />}>
-            <Route index element={<AdminServices />} />
-            {/* <Route path="service/:id" element={<AdminServiceDetails />} /> */}
+            {/* <Route index element={<AdminServices />} /> */}
+            <Route path="services" element={<ServicesByType />} />
             <Route path="service/pan/:id" element={<ASDPan />} />
             <Route path="service/rtps/:id" element={<ASDRtps />} />
             <Route path="service/job-card/:id" element={<ASDJobCard />} />
             <Route path="service/itr/:id" element={<ASDITR />} />
-            <Route path="services" element={<ServicesByType />} />
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />
             <Route path="services/rtps" element={<ServicesRtps />} />
+            <Route
+              path="services/voter-card"
+              element={<AdminVoterServices />}
+            />
             <Route path="users" element={<Users />} />
 
             <Route path="wallet-status" element={<AdminWalletDashboard />} />

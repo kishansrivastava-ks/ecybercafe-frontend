@@ -40,7 +40,7 @@ const Login = () => {
       setTimeout(() => {
         navigate(
           data.user.role === "admin"
-            ? "/admin-dashboard"
+            ? "/admin-dashboard/services"
             : "/dashboard/services"
         );
       }, 1500);
