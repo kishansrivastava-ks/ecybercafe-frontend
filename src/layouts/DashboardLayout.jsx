@@ -19,6 +19,7 @@ import {
 import ThemeToggle from "../utils/ThemeToggle";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
+import WalletBalanceBadge from "../components/WalletBalanceBadge";
 
 const DashboardLayout = () => {
   // const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -95,22 +96,20 @@ const DashboardLayout = () => {
           )}
         </SidebarHeader>
 
-        {/* <UserProfile>
-          <UserAvatar>{user?.name?.charAt(0).toUpperCase()}</UserAvatar>
-          <UserInfo>
-            <UserName>{user?.name.toUpperCase()}</UserName>
-            <UserEmail>{user?.email}</UserEmail>
-          </UserInfo>
-        </UserProfile> */}
-
         <NavLinks>
-          <StyledLink
+          {/* Wallet */}
+          <StyledLink to="/dashboard/wallet">
+            <Wallet size={20} />
+            Wallet
+          </StyledLink>
+
+          {/* <StyledLink
             to="/dashboard/services"
             onClick={() => isMobile && setSidebarOpen(false)}
           >
             <Grid size={20} />
             Services
-          </StyledLink>
+          </StyledLink> */}
 
           {/* PAN Card Dropdown */}
           <ServiceDropdown>
@@ -149,117 +148,6 @@ const DashboardLayout = () => {
               </DropdownContent>
             )}
           </ServiceDropdown>
-
-          {/* Wallet */}
-          <StyledLink to="/dashboard/wallet">
-            <Wallet size={20} />
-            Wallet
-          </StyledLink>
-
-          {/* RTPS Dropdown */}
-          {/* <ServiceDropdown>
-            <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
-              <FileText size={20} />
-              RTPS
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isRtpsOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isRtpsOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/rtps"
-                  onClick={() => {
-                    setIsRtpsOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  Apply RTPS
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/rtps/list"
-                  onClick={() => {
-                    setIsRtpsOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List RTPS
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown> */}
-
-          {/* Job Card Dropdown */}
-          {/* <ServiceDropdown>
-            <div onClick={() => setIsJobCardOpen(!isJobCardOpen)}>
-              <Briefcase size={20} />
-              Job Card
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isJobCardOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isJobCardOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/job-card"
-                  onClick={() => {
-                    setIsJobCardOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  Apply Job Card
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/job-card/list"
-                  onClick={() => {
-                    setIsJobCardOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List Job Card
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown> */}
-
-          {/* ITR Service Dropdown */}
-          {/* <ServiceDropdown>
-            <div onClick={() => setIsItrOpen(!isItrOpen)}>
-              <FileText size={20} />
-              ITR Service
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isItrOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isItrOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/itr"
-                  onClick={() => {
-                    setIsItrOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  Apply for ITR
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown> */}
         </NavLinks>
 
         <LogoutSection>
@@ -282,11 +170,9 @@ const DashboardLayout = () => {
               <HeaderTitle $isMobile={isMobile}>
                 Welcome, {user?.name}
               </HeaderTitle>
-              {/* <HeaderSubtitle>
-                Here's an overview of your dashboard
-              </HeaderSubtitle> */}
             </div>
             <HeaderActions>
+              <WalletBalanceBadge />
               <ThemeToggle />
               <UserDropdownContainer>
                 <UserCircle

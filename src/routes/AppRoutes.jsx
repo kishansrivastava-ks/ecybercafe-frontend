@@ -60,6 +60,7 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 
 import Wallet from "../pages/Dashboard/WalletPages/Wallet";
 import PaymentStatus from "../pages/Dashboard/WalletPages/PaymentStatus";
+import AdminWalletDashboard from "../pages/AdminDashboard/AdminWalletDashboard";
 
 const AppRoutes = () => {
   return (
@@ -160,6 +161,8 @@ const AppRoutes = () => {
             <Route path="services/job-card" element={<ServicesJobCard />} />
             <Route path="services/rtps" element={<ServicesRtps />} />
             <Route path="users" element={<Users />} />
+
+            <Route path="wallet-status" element={<AdminWalletDashboard />} />
           </Route>
         </Route>
 

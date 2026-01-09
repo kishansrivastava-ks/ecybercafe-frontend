@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   LogOut,
+  TrendingUp,
 } from "lucide-react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -96,10 +97,14 @@ const AdminDashboardLayout = () => {
             <Users size={20} />
             <span>Users</span>
           </NavItem>
-          {/* <NavItem to="/admin/settings" onClick={closeSidebarOnMobile}>
-            <Settings size={20} />
-            <span>Settings</span>
-          </NavItem> */}
+
+          <NavItem
+            to="/admin-dashboard/wallet-status"
+            onClick={closeSidebarOnMobile}
+          >
+            <TrendingUp size={20} />
+            <span>Financial Overview</span>
+          </NavItem>
         </Navigation>
 
         <SupportSection>
