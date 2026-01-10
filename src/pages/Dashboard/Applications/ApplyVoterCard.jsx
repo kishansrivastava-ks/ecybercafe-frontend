@@ -46,7 +46,7 @@ const INDIAN_STATES = [
   "Puducherry",
 ];
 
-const COST_PER_APP = 370;
+const COST_PER_APP = 30;
 
 const ApplyVoterCard = () => {
   const navigate = useNavigate();

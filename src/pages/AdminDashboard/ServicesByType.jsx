@@ -22,11 +22,11 @@ const ServicesByType = () => {
       description: "Access RTPS services and details here.",
       route: "/admin-dashboard/services/rtps",
     },
-    // {
-    //   title: "RTPS",
-    //   description: "RTPS related services and requests.",
-    //   route: "/admin-dashboard/services/rtps",
-    // },
+    {
+      title: "Labour Card",
+      description: "Labour Card related services and requests.",
+      route: "/admin-dashboard/services/labour-card",
+    },
   ];
 
   return (

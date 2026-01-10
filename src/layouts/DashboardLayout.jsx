@@ -28,6 +28,7 @@ const DashboardLayout = () => {
   const [isPanOpen, setIsPanOpen] = useState(false);
   const [isVoterOpen, setIsVoterOpen] = useState(false);
   const [isRtpsOpen, setIsRtpsOpen] = useState(false);
+  const [isLabourOpen, setIsLabourOpen] = useState(false);
 
   // const [isItrOpen, setIsItrOpen] = useState(false);
 
@@ -223,6 +224,44 @@ const DashboardLayout = () => {
                   }}
                 >
                   List RTPS
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown>
+
+          {/* Labour Card Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsLabourOpen(!isLabourOpen)}>
+              <IdCard size={20} />
+              Labour Card
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isLabourOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isLabourOpen && (
+              <DropdownContent>
+                <StyledLink
+                  to="/dashboard/services/labour-card"
+                  onClick={() => {
+                    setIsLabourOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  Apply Labour Card
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/labour-card/list"
+                  onClick={() => {
+                    setIsLabourOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List Labour Card
                 </StyledLink>
               </DropdownContent>
             )}

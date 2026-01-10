@@ -50,6 +50,9 @@ import AdminVoterServices from "../pages/AdminDashboard/AdminVoterServices";
 import ApplyRtps from "../pages/Dashboard/Applications/ApplyRtps";
 import AdminRtpsServices from "../pages/AdminDashboard/AdminRtpsServices";
 import RtpsList from "../pages/Dashboard/Lists/RtpsList";
+import ApplyLabourCard from "../pages/Dashboard/Applications/ApplyLabourCard";
+import LabourCardList from "../pages/Dashboard/Lists/LabourCardList";
+import AdminLabourServices from "../pages/AdminDashboard/AdminLabourServices";
 
 const AppRoutes = () => {
   return (
@@ -106,7 +109,11 @@ const AppRoutes = () => {
               element={<VoterCardList />}
             />
 
-            <Route path="services/itr" element={<ApplyITR />} />
+            <Route path="services/labour-card" element={<ApplyLabourCard />} />
+            <Route
+              path="services/labour-card/list"
+              element={<LabourCardList />}
+            />
 
             <Route
               path="services/pan/:serviceId"
@@ -140,6 +147,10 @@ const AppRoutes = () => {
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />
             <Route path="services/rtps" element={<AdminRtpsServices />} />
+            <Route
+              path="services/labour-card"
+              element={<AdminLabourServices />}
+            />
             <Route
               path="services/voter-card"
               element={<AdminVoterServices />}
