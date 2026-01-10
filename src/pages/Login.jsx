@@ -41,7 +41,7 @@ const Login = () => {
         navigate(
           data.user.role === "admin"
             ? "/admin-dashboard/services"
-            : "/dashboard/services"
+            : "/dashboard"
         );
       }, 1500);
     } catch (err) {

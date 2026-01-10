@@ -1,6 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Login from "../pages/Login";
-// import Dashboard from "../pages/Dashboard";
 import AppLayout from "../layouts/AppLayout";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
@@ -11,33 +9,20 @@ import UserServices from "../pages/Dashboard/UserServices";
 import Services from "../pages/Services";
 import ApplyPanCard from "../pages/Services/ApplyPanCard";
 import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
-import AdminServices from "../pages/AdminDashboard/AdminServices";
-import AdminServiceDetails from "../pages/AdminDashboard/AdminServiceDetails";
 import Home from "../pages/Home";
 import ServiceDetailsPan from "../pages/Dashboard/ServiceDetailsPan";
 import ProtectedRoute from "../components/ProtectedRouteComponent";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 import NotFoundPage from "../pages/NotFoundPage";
-import ApplyRtps from "../pages/Services/ApplyRtps";
-import ApplyJobCard from "../pages/Services/ApplyJobCard";
 import ServiceDetailsRtps from "../pages/Dashboard/ServiceDetailsRtps";
 import ServiceDetailsJobCard from "../pages/Dashboard/ServiceDetailsJobCard";
 import ASDPan from "../pages/AdminDashboard/ASDPan";
 import ASDRtps from "../pages/AdminDashboard/ASDRtps";
 import ASDJobCard from "../pages/AdminDashboard/ASDJobCard";
-import About from "../pages/About";
-import Contact from "../pages/Contact";
 
-import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
-import Terms from "../pages/Legal/Terms";
-import CookiesPolicy from "../pages/Legal/CookiesPolicy";
-import Refunds from "../pages/Legal/Refunds";
 import ServicesByType from "../pages/AdminDashboard/ServicesByType";
 import ServicesPan from "../pages/AdminDashboard/ServicesPan";
 import ServicesJobCard from "../pages/AdminDashboard/ServicesJobCard";
-import ServicesRtps from "../pages/AdminDashboard/ServicesRtps";
-import DocumentUpload from "../test/DocumentUpload";
-import DocumentTester from "../test/DocumentTester";
 import AadharCard from "../pages/Products/AadharCard";
 import VoterCard from "../pages/Products/VoterID";
 import EShareCard from "../pages/Products/EShareCard";
@@ -49,8 +34,6 @@ import PhotoPaper from "../pages/Products/PhotoPaper";
 import LaminatePouch from "../pages/Products/LaminatePouch";
 import LaminatedAadhar from "../pages/Products/LaminatedAadhar";
 import PanCardServices from "../pages/Dashboard/Lists/PanCardServices";
-import RTPSServices from "../pages/Dashboard/Lists/RTPSServices";
-import JobCardServices from "../pages/Dashboard/Lists/JobCardServices";
 import ASDITR from "../pages/AdminDashboard/ASDITR";
 import ApplyITR from "../pages/Services/ApplyITR";
 import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
@@ -64,6 +47,9 @@ import AdminWalletDashboard from "../pages/AdminDashboard/AdminWalletDashboard";
 import ApplyVoterCard from "../pages/Dashboard/Applications/ApplyVoterCard";
 import VoterCardList from "../pages/Dashboard/Lists/VoterCardList";
 import AdminVoterServices from "../pages/AdminDashboard/AdminVoterServices";
+import ApplyRtps from "../pages/Dashboard/Applications/ApplyRtps";
+import AdminRtpsServices from "../pages/AdminDashboard/AdminRtpsServices";
+import RtpsList from "../pages/Dashboard/Lists/RtpsList";
 
 const AppRoutes = () => {
   return (
@@ -94,14 +80,6 @@ const AppRoutes = () => {
           </Route>
 
           <Route path="/apply/pan-card" element={<ApplyPanCard />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/document-tester" element={<DocumentTester />} />
-
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/cookies" element={<CookiesPolicy />} />
-          <Route path="/refunds" element={<Refunds />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
@@ -120,18 +98,12 @@ const AppRoutes = () => {
             />
 
             <Route path="services/rtps" element={<ApplyRtps />} />
-            <Route path="services/rtps/list" element={<RTPSServices />} />
+            <Route path="services/rtps/list" element={<RtpsList />} />
 
             <Route path="services/voter-card" element={<ApplyVoterCard />} />
             <Route
               path="services/voter-card/list"
               element={<VoterCardList />}
-            />
-
-            <Route path="services/job-card" element={<ApplyJobCard />} />
-            <Route
-              path="services/job-card/list"
-              element={<JobCardServices />}
             />
 
             <Route path="services/itr" element={<ApplyITR />} />
@@ -167,7 +139,7 @@ const AppRoutes = () => {
             <Route path="service/itr/:id" element={<ASDITR />} />
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />
-            <Route path="services/rtps" element={<ServicesRtps />} />
+            <Route path="services/rtps" element={<AdminRtpsServices />} />
             <Route
               path="services/voter-card"
               element={<AdminVoterServices />}

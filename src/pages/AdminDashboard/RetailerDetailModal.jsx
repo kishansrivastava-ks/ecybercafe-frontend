@@ -155,6 +155,7 @@ const CloseButton = styled.button`
   border: none;
   cursor: pointer;
   z-index: 10;
+  color: black;
 `;
 const Content = styled.div`
   display: flex;
@@ -184,8 +185,8 @@ const BalanceBadge = styled.span`
 `;
 const ScrollArea = styled.div`
   padding: 2rem;
-  overflow-y: auto;
   flex: 1;
+  overflow-y: auto;
 `;
 const Section = styled.div`
   margin-bottom: 2rem;

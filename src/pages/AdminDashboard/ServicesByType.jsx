@@ -17,11 +17,11 @@ const ServicesByType = () => {
       description: "Apply and manage your Voter services seamlessly.",
       route: "/admin-dashboard/services/voter-card",
     },
-    // {
-    //   title: "Job Card",
-    //   description: "Access job card services and details here.",
-    //   route: "/admin-dashboard/services/job-card",
-    // },
+    {
+      title: "RTPS",
+      description: "Access RTPS services and details here.",
+      route: "/admin-dashboard/services/rtps",
+    },
     // {
     //   title: "RTPS",
     //   description: "RTPS related services and requests.",

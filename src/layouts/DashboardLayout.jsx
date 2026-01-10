@@ -27,7 +27,7 @@ const DashboardLayout = () => {
 
   const [isPanOpen, setIsPanOpen] = useState(false);
   const [isVoterOpen, setIsVoterOpen] = useState(false);
-  // const [isJobCardOpen, setIsJobCardOpen] = useState(false);
+  const [isRtpsOpen, setIsRtpsOpen] = useState(false);
 
   // const [isItrOpen, setIsItrOpen] = useState(false);
 
@@ -161,7 +161,7 @@ const DashboardLayout = () => {
                 size={16}
                 style={{
                   marginLeft: "auto",
-                  transform: isPanOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transform: isVoterOpen ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.3s ease",
                 }}
               />
@@ -185,6 +185,44 @@ const DashboardLayout = () => {
                   }}
                 >
                   List Voter Card
+                </StyledLink>
+              </DropdownContent>
+            )}
+          </ServiceDropdown>
+
+          {/* RTPS Dropdown */}
+          <ServiceDropdown>
+            <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
+              <IdCard size={20} />
+              RTPS
+              <ChevronDown
+                size={16}
+                style={{
+                  marginLeft: "auto",
+                  transform: isRtpsOpen ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+            </div>
+            {isRtpsOpen && (
+              <DropdownContent>
+                <StyledLink
+                  to="/dashboard/services/rtps"
+                  onClick={() => {
+                    setIsRtpsOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  Apply RTPS
+                </StyledLink>
+                <StyledLink
+                  to="/dashboard/services/rtps/list"
+                  onClick={() => {
+                    setIsRtpsOpen(false);
+                    isMobile && setSidebarOpen(false);
+                  }}
+                >
+                  List RTPS
                 </StyledLink>
               </DropdownContent>
             )}
