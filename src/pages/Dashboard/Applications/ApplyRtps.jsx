@@ -9,13 +9,36 @@ import { successToast, errorToast } from "../../../utils/ToastNotfications";
 
 const COST_PER_APP = 370;
 
+const DISTRICT_DATA = {
+  Aurangabad: {
+    blocks: ["Goh"],
+    prefixes: [
+      "BRCCO/2026/",
+      "BICCO/2026/",
+      "BCCCO/2026/",
+      "NCLCO/2026/",
+      "BOBCO/2026/",
+    ],
+  },
+  Gaya: {
+    blocks: ["Tekari", "Konch", "Guraru", "Belaganj", "Paraiya"],
+    prefixes: [
+      "BRCCO/2026/",
+      "BICCO/2026/",
+      "BCCCO/2026/",
+      "NCLCO/2026/",
+      "BOBCO/2026/",
+    ],
+  },
+};
+
 const ApplyRtps = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   // Initial state with one empty row
   const [rows, setRows] = useState([
-    { id: Date.now(), district: "", block: "", referenceNumber: "" },
+    { id: Date.now(), district: "", block: "", refPrefix: "", refSuffix: "" },
   ]);
 
   // --- Handlers ---
@@ -23,7 +46,7 @@ const ApplyRtps = () => {
   const handleAddRow = () => {
     setRows([
       ...rows,
-      { id: Date.now(), district: "", block: "", referenceNumber: "" },
+      { id: Date.now(), district: "", block: "", refPrefix: "", refSuffix: "" },
     ]);
   };
 
@@ -33,6 +56,22 @@ const ApplyRtps = () => {
       return;
     }
     setRows(rows.filter((row) => row.id !== id));
+  };
+
+  const handleDistrictChange = (id, value) => {
+    setRows(
+      rows.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              district: value,
+              block: "", // Reset dependent fields
+              refPrefix: "",
+              refSuffix: "",
+            }
+          : row
+      )
+    );
   };
 
   const handleInputChange = (id, field, value) => {
@@ -47,7 +86,10 @@ const ApplyRtps = () => {
   const applyMutation = useMutation({
     mutationFn: async (data) => {
       // Clean data: remove local 'id' used for key
-      const cleanedData = data.map(({ id, ...rest }) => rest);
+      const cleanedData = data.map(({ id, refPrefix, refSuffix, ...rest }) => ({
+        ...rest,
+        referenceNumber: `${refPrefix}${refSuffix}`,
+      }));
       const res = await axiosInstance.post("/services/apply/rtps", {
         applications: cleanedData,
       });
@@ -69,7 +111,7 @@ const ApplyRtps = () => {
     e.preventDefault();
     // Validation
     for (const row of rows) {
-      if (!row.district || !row.block || !row.referenceNumber) {
+      if (!row.district || !row.block || !row.refPrefix || !row.refSuffix) {
         errorToast("Please fill in all fields for every row.");
         return;
       }
@@ -104,33 +146,89 @@ const ApplyRtps = () => {
             {rows.map((row, index) => (
               <FormRow key={row.id}>
                 <RowNumber>{index + 1}.</RowNumber>
-                <Input
-                  type="text"
-                  placeholder="District"
+
+                {/* District Dropdown */}
+                <Select
                   value={row.district}
-                  onChange={(e) =>
-                    handleInputChange(row.id, "district", e.target.value)
-                  }
+                  onChange={(e) => handleDistrictChange(row.id, e.target.value)}
                   style={{ flex: 1.5 }}
-                />
-                <Input
-                  type="text"
-                  placeholder="Block"
+                >
+                  <option value="">Select District</option>
+                  {Object.keys(DISTRICT_DATA).map((dist) => (
+                    <option key={dist} value={dist}>
+                      {dist}
+                    </option>
+                  ))}
+                </Select>
+
+                {/* Block Dropdown */}
+                <Select
                   value={row.block}
                   onChange={(e) =>
                     handleInputChange(row.id, "block", e.target.value)
                   }
                   style={{ flex: 1.5 }}
-                />
-                <Input
-                  type="text"
-                  placeholder="Ref No (e.g. RTPS/...)"
-                  value={row.referenceNumber}
-                  onChange={(e) =>
-                    handleInputChange(row.id, "referenceNumber", e.target.value)
-                  }
-                  style={{ flex: 2 }}
-                />
+                  disabled={!row.district} // Disable if no district selected
+                >
+                  <option value="">Select Block</option>
+                  {row.district &&
+                    DISTRICT_DATA[row.district]?.blocks.map((blk) => (
+                      <option key={blk} value={blk}>
+                        {blk}
+                      </option>
+                    ))}
+                </Select>
+
+                {/* Reference Number Split Section */}
+                <RefGroup style={{ flex: 2 }}>
+                  {/* Part 1: Prefix Dropdown */}
+                  <Select
+                    value={row.refPrefix}
+                    onChange={(e) =>
+                      handleInputChange(row.id, "refPrefix", e.target.value)
+                    }
+                    disabled={!row.district}
+                    style={{
+                      // borderRight: "none",
+                      borderRadius: "6px",
+                      width: "142px",
+                    }}
+                  >
+                    <option value="">Ref Type</option>
+                    {row.district &&
+                      DISTRICT_DATA[row.district]?.prefixes.map((pre) => (
+                        <option key={pre} value={pre}>
+                          {pre}
+                        </option>
+                      ))}
+                  </Select>
+
+                  {/* Part 2: Number Input */}
+                  <CompositeInputWrapper>
+                    {/* Visual "Non-editable" Prefix (Optional, for better UX) */}
+                    {row.refPrefix && (
+                      <RefPrefixDisplay>{row.refPrefix}</RefPrefixDisplay>
+                    )}
+
+                    <Input
+                      type="text"
+                      placeholder={
+                        row.refPrefix ? "Enter number" : "Select Type first"
+                      }
+                      value={row.refPrefix ? row.refSuffix : ""}
+                      onChange={(e) =>
+                        handleInputChange(row.id, "refSuffix", e.target.value)
+                      }
+                      disabled={!row.refPrefix}
+                      style={{
+                        borderRadius: "0 6px 6px 0",
+                        borderLeft: row.refPrefix ? "none" : "1px solid #ddd",
+                        paddingLeft: row.refPrefix ? "0" : "0.75rem",
+                      }}
+                    />
+                  </CompositeInputWrapper>
+                </RefGroup>
+
                 <DeleteButton onClick={() => handleRemoveRow(row.id)}>
                   X
                 </DeleteButton>
@@ -406,4 +504,59 @@ const ConfirmBtn = styled.button`
   &:disabled {
     opacity: 0.7;
   }
+`;
+const Select = styled.select`
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  outline: none;
+  &:focus {
+    border-color: var(--color-primary);
+  }
+  &:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+  }
+`;
+
+const RefGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const CompositeInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  gap: 0.5rem;
+  /* border-left: none; */
+  border-radius: 6px;
+  flex: 1;
+  background-color: white;
+
+  /* Ensure the input inside fills the space and removes its own border */
+  input {
+    border: none;
+    border-radius: 0 6px 6px 0;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-within {
+    border-color: var(--color-primary);
+    /* Also highlight the adjacent select border to match if possible, or just the input */
+  }
+`;
+
+const RefPrefixDisplay = styled.span`
+  color: #666;
+  background: #f8f9fa;
+  padding: 0.75rem 0.5rem 0.75rem 0.75rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  user-select: none; /* Make it non-selectable text to feel "locked" */
 `;

@@ -29,8 +29,7 @@ const ApplyPanCard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef(null);
   const signatureInputRef = useRef(null);
-  // const [aadharInputRef, setAadharInputRef] = useState(null);
-  const aadharInputRef = useRef(null);
+  const [aadharInputRef, setAadharInputRef] = useState(null);
   const [showToast, setShowToast] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -280,8 +279,6 @@ const ApplyPanCard = () => {
           <FileText size={48} color="var(--color-primary)" />
           <Title>PAN Card Application</Title>
           <Subtitle>Complete your application with accurate details</Subtitle>
-
-          <FeeBadge>Application Fee: ₹125</FeeBadge>
         </FormHeader>
 
         <Form onSubmit={handleSubmit}>
@@ -354,7 +351,7 @@ const ApplyPanCard = () => {
             />
           </InputGroup>
 
-          <InputGroup style={{ gridColumn: "1 / -1" }}>
+          <InputGroup>
             <div>
               <MapPin size={20} color="var(--color-text-muted)" />
             </div>
@@ -369,7 +366,7 @@ const ApplyPanCard = () => {
             />
           </InputGroup>
 
-          <FileUploadSection style={{ gridColumn: "1 / -1" }}>
+          <FileUploadSection>
             <FileUploadGroup>
               <FileUploadLabel>Upload Photo</FileUploadLabel>
               <FileUploadWrapper>
@@ -464,20 +461,14 @@ const ApplyPanCard = () => {
             </FileUploadGroup>
           </FileUploadSection>
 
-          <div style={{ gridColumn: "1 / -1" }}>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={mutation.isLoading}
-              $fullWidth
-            >
-              {mutation.isLoading ? (
-                <Spinner size={20} />
-              ) : (
-                "Submit Application"
-              )}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={mutation.isLoading}
+            $fullWidth
+          >
+            {mutation.isLoading ? <Spinner size={20} /> : "Submit Application"}
+          </Button>
         </Form>
       </FormWrapper>
 
@@ -661,7 +652,7 @@ const Container = styled(motion.div)`
 
 const FormWrapper = styled.div`
   padding: 2.5rem;
-  width: 70vw;
+  width: 50vw;
 
   @media (max-width: 1024px) {
     width: 70vw;
@@ -710,13 +701,11 @@ const Subtitle = styled.p`
 `;
 
 const Form = styled.form`
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Creates two equal columns */
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
 
-  /* Make the form stack vertically on smaller screens */
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 480px) {
     gap: 1.25rem;
   }
 `;
@@ -734,16 +723,4 @@ const DateInputWrapper = styled.div`
   align-items: center;
   gap: 1rem;
   width: 100%;
-`;
-
-const FeeBadge = styled.div`
-  margin-top: 1rem;
-  background-color: #e6f4ea; /* Light green background */
-  color: #1e7e34; /* Dark green text */
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1px solid #c3e6cb;
-  display: inline-block;
 `;

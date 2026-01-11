@@ -26,8 +26,8 @@ const HeroSection = () => {
           </Headline>
 
           <Subheadline>
-            Your one-stop platform for seamless document applications, digital
-            services, and government paperwork.
+            Your one-stop platform for seamless document applications and
+            digital services
           </Subheadline>
 
           <ButtonGroup>
@@ -58,10 +58,10 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <ServiceIcons>
-            <ServiceIcon whileHover={{ scale: 1.1 }}>
+            {/* <ServiceIcon whileHover={{ scale: 1.1 }}>
               <FileText size={40} color="var(--color-primary)" />
               <IconLabel>PAN Card</IconLabel>
-            </ServiceIcon>
+            </ServiceIcon> */}
             <ServiceIcon whileHover={{ scale: 1.1 }}>
               <Globe size={40} color="var(--color-secondary)" />
               <IconLabel>Digital Services</IconLabel>
@@ -75,7 +75,7 @@ const HeroSection = () => {
 
 const HeroContainer = styled.section`
   background-color: var(--color-bg);
-  min-height: 90vh;
+  /* min-height: 90vh; */
   display: flex;
   align-items: center;
   padding: 2rem;
@@ -97,7 +97,7 @@ const ContentWrapper = styled(motion.div)`
 
 const TextContent = styled.div`
   flex: 1;
-  max-width: 600px;
+  max-width: 800px;
 `;
 
 const Headline = styled.h1`

@@ -6,36 +6,24 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
-import { locationData } from "../../../data/locationData";
 
 const COST_PER_APP = 370;
 
-const ApplyLabourCard = () => {
+const ApplyRtps = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  // Initial state
+  // Initial state with one empty row
   const [rows, setRows] = useState([
-    {
-      id: Date.now(),
-      district: "",
-      block: "",
-      name: "",
-      applicationNumber: "",
-    },
+    { id: Date.now(), district: "", block: "", referenceNumber: "" },
   ]);
 
   // --- Handlers ---
+
   const handleAddRow = () => {
     setRows([
       ...rows,
-      {
-        id: Date.now(),
-        district: "",
-        block: "",
-        name: "",
-        applicationNumber: "",
-      },
+      { id: Date.now(), district: "", block: "", referenceNumber: "" },
     ]);
   };
 
@@ -45,16 +33,6 @@ const ApplyLabourCard = () => {
       return;
     }
     setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleDistrictChange = (id, newDistrict) => {
-    setRows(
-      rows.map((row) =>
-        row.id === id
-          ? { ...row, district: newDistrict, block: "" } // Reset block when district changes
-          : row
-      )
-    );
   };
 
   const handleInputChange = (id, field, value) => {
@@ -68,15 +46,16 @@ const ApplyLabourCard = () => {
   // --- API Mutation ---
   const applyMutation = useMutation({
     mutationFn: async (data) => {
+      // Clean data: remove local 'id' used for key
       const cleanedData = data.map(({ id, ...rest }) => rest);
-      const res = await axiosInstance.post("/services/apply/labour-card", {
+      const res = await axiosInstance.post("/services/apply/rtps", {
         applications: cleanedData,
       });
       return res.data;
     },
     onSuccess: (data) => {
       successToast(data.message || "Applications submitted successfully!");
-      navigate("/dashboard/services/labour-card/list");
+      navigate("/dashboard/services/rtps/list");
     },
     onError: (err) => {
       errorToast(
@@ -88,12 +67,10 @@ const ApplyLabourCard = () => {
 
   const handlePreSubmit = (e) => {
     e.preventDefault();
-    // Validation: District is optional, others are required
+    // Validation
     for (const row of rows) {
-      if (!row.block || !row.name || !row.applicationNumber) {
-        errorToast(
-          "Block, Name, and Application Number are required for all rows."
-        );
+      if (!row.district || !row.block || !row.referenceNumber) {
+        errorToast("Please fill in all fields for every row.");
         return;
       }
     }
@@ -104,8 +81,8 @@ const ApplyLabourCard = () => {
     <Container initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <Header>
         <div>
-          <Title>Apply for Labour Card</Title>
-          <Subtitle>Bulk application for Labour Card services</Subtitle>
+          <Title>Apply for RTPS</Title>
+          <Subtitle>Bulk application for RTPS services</Subtitle>
         </div>
         <RateBadge>
           Rate: <strong>₹{COST_PER_APP}</strong> / Application
@@ -114,11 +91,12 @@ const ApplyLabourCard = () => {
 
       <FormContainer>
         <FormHeader>
-          <ColHeader style={{ flex: 1 }}>District (Opt)</ColHeader>
-          <ColHeader style={{ flex: 1 }}>Block</ColHeader>
-          <ColHeader style={{ flex: 1.5 }}>Applicant Name</ColHeader>
-          <ColHeader style={{ flex: 1.5 }}>Application No.</ColHeader>
-          <ColHeader style={{ width: "40px" }}></ColHeader>
+          <ColHeader style={{ flex: 1.5 }}>District</ColHeader>
+          <ColHeader style={{ flex: 1.5 }}>Block</ColHeader>
+          <ColHeader style={{ flex: 2 }}>Reference Number</ColHeader>
+          <ColHeader style={{ width: "50px", textAlign: "center" }}>
+            Action
+          </ColHeader>
         </FormHeader>
 
         <RowsWrapper>
@@ -126,57 +104,32 @@ const ApplyLabourCard = () => {
             {rows.map((row, index) => (
               <FormRow key={row.id}>
                 <RowNumber>{index + 1}.</RowNumber>
-                <Select
-                  value={row.district}
-                  onChange={(e) => handleDistrictChange(row.id, e.target.value)}
-                  style={{ flex: 1 }}
-                >
-                  <option value="">Select District</option>
-                  {Object.keys(locationData).map((dist) => (
-                    <option key={dist} value={dist}>
-                      {dist}
-                    </option>
-                  ))}
-                </Select>
-
-                <Select
-                  value={row.block}
-                  onChange={(e) =>
-                    handleInputChange(row.id, "block", e.target.value)
-                  }
-                  style={{ flex: 1 }}
-                  disabled={!row.district} // Disable until district is picked
-                >
-                  <option value="">Select Block</option>
-                  {row.district &&
-                    locationData[row.district] &&
-                    locationData[row.district].map((blk) => (
-                      <option key={blk} value={blk}>
-                        {blk}
-                      </option>
-                    ))}
-                </Select>
                 <Input
                   type="text"
-                  placeholder="Name"
-                  value={row.name}
+                  placeholder="District"
+                  value={row.district}
                   onChange={(e) =>
-                    handleInputChange(row.id, "name", e.target.value)
+                    handleInputChange(row.id, "district", e.target.value)
                   }
                   style={{ flex: 1.5 }}
                 />
                 <Input
                   type="text"
-                  placeholder="Application No"
-                  value={row.applicationNumber}
+                  placeholder="Block"
+                  value={row.block}
                   onChange={(e) =>
-                    handleInputChange(
-                      row.id,
-                      "applicationNumber",
-                      e.target.value
-                    )
+                    handleInputChange(row.id, "block", e.target.value)
                   }
                   style={{ flex: 1.5 }}
+                />
+                <Input
+                  type="text"
+                  placeholder="Ref No (e.g. RTPS/...)"
+                  value={row.referenceNumber}
+                  onChange={(e) =>
+                    handleInputChange(row.id, "referenceNumber", e.target.value)
+                  }
+                  style={{ flex: 2 }}
                 />
                 <DeleteButton onClick={() => handleRemoveRow(row.id)}>
                   X
@@ -219,8 +172,8 @@ const ApplyLabourCard = () => {
               <AlertBox>
                 <AlertCircle size={20} />
                 <p>
-                  This will deduct <strong>₹{totalCost}</strong> from your
-                  wallet.
+                  Please confirm. This will deduct <strong>₹{totalCost}</strong>{" "}
+                  from your wallet.
                 </p>
               </AlertBox>
               <p>
@@ -245,12 +198,13 @@ const ApplyLabourCard = () => {
   );
 };
 
-export default ApplyLabourCard;
+export default ApplyRtps;
 
-// --- Styled Components (Same as RTPS) ---
+// --- Styled Components ---
+
 const Container = styled(motion.div)`
   padding: 2rem;
-  /* max-width: 1100px; */
+  /* max-width: 1000px; */
   margin: 0 auto;
 `;
 const Header = styled.div`
@@ -308,6 +262,7 @@ const FormRow = styled.div`
     background: #f9f9f9;
     padding: 1rem;
     border-radius: 8px;
+    position: relative;
   }
 `;
 const RowNumber = styled.span`
@@ -335,6 +290,13 @@ const DeleteButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+  }
 `;
 const ActionsArea = styled.div`
   display: flex;
@@ -443,25 +405,5 @@ const ConfirmBtn = styled.button`
   cursor: pointer;
   &:disabled {
     opacity: 0.7;
-  }
-`;
-
-const Select = styled.select`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  flex: 1;
-  background-color: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: 2px solid var(--color-primary);
-    border-color: transparent;
-  }
-
-  &:disabled {
-    background-color: #f3f4f6;
-    cursor: not-allowed;
-    color: #9ca3af;
   }
 `;

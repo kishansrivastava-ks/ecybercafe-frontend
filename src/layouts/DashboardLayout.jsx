@@ -157,7 +157,7 @@ const DashboardLayout = () => {
           <ServiceDropdown>
             <div onClick={() => setIsVoterOpen(!isVoterOpen)}>
               <IdCard size={20} />
-              Voter ID
+              Voter PDF
               <ChevronDown
                 size={16}
                 style={{
@@ -176,7 +176,7 @@ const DashboardLayout = () => {
                     isMobile && setSidebarOpen(false);
                   }}
                 >
-                  Apply Voter Card
+                  Apply Voter PDF
                 </StyledLink>
                 <StyledLink
                   to="/dashboard/services/voter-card/list"
@@ -185,7 +185,7 @@ const DashboardLayout = () => {
                     isMobile && setSidebarOpen(false);
                   }}
                 >
-                  List Voter Card
+                  List Voter PDF
                 </StyledLink>
               </DropdownContent>
             )}

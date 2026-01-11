@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
-import { locationData } from "../../../data/locationData";
 
 const COST_PER_APP = 370;
 
@@ -45,16 +44,6 @@ const ApplyLabourCard = () => {
       return;
     }
     setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleDistrictChange = (id, newDistrict) => {
-    setRows(
-      rows.map((row) =>
-        row.id === id
-          ? { ...row, district: newDistrict, block: "" } // Reset block when district changes
-          : row
-      )
-    );
   };
 
   const handleInputChange = (id, field, value) => {
@@ -126,36 +115,24 @@ const ApplyLabourCard = () => {
             {rows.map((row, index) => (
               <FormRow key={row.id}>
                 <RowNumber>{index + 1}.</RowNumber>
-                <Select
+                <Input
+                  type="text"
+                  placeholder="District"
                   value={row.district}
-                  onChange={(e) => handleDistrictChange(row.id, e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange(row.id, "district", e.target.value)
+                  }
                   style={{ flex: 1 }}
-                >
-                  <option value="">Select District</option>
-                  {Object.keys(locationData).map((dist) => (
-                    <option key={dist} value={dist}>
-                      {dist}
-                    </option>
-                  ))}
-                </Select>
-
-                <Select
+                />
+                <Input
+                  type="text"
+                  placeholder="Block"
                   value={row.block}
                   onChange={(e) =>
                     handleInputChange(row.id, "block", e.target.value)
                   }
                   style={{ flex: 1 }}
-                  disabled={!row.district} // Disable until district is picked
-                >
-                  <option value="">Select Block</option>
-                  {row.district &&
-                    locationData[row.district] &&
-                    locationData[row.district].map((blk) => (
-                      <option key={blk} value={blk}>
-                        {blk}
-                      </option>
-                    ))}
-                </Select>
+                />
                 <Input
                   type="text"
                   placeholder="Name"
@@ -443,25 +420,5 @@ const ConfirmBtn = styled.button`
   cursor: pointer;
   &:disabled {
     opacity: 0.7;
-  }
-`;
-
-const Select = styled.select`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  flex: 1;
-  background-color: white;
-  cursor: pointer;
-
-  &:focus {
-    outline: 2px solid var(--color-primary);
-    border-color: transparent;
-  }
-
-  &:disabled {
-    background-color: #f3f4f6;
-    cursor: not-allowed;
-    color: #9ca3af;
   }
 `;
