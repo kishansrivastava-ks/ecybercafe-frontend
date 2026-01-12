@@ -24,7 +24,8 @@ import {
   // Toast,
   ToastNotification,
 } from "../../ui/UIComponents";
-import { useServicePrice } from "../../hooks/useServicePrice";
+import { useServiceConfig } from "../../hooks/useServiceConfig";
+import ServiceMaintenance from "../../components/ServiceMaintenance";
 
 const ApplyPanCard = () => {
   const navigate = useNavigate();
@@ -33,7 +34,11 @@ const ApplyPanCard = () => {
   const aadharInputRef = useRef(null);
   const [showToast, setShowToast] = useState(true);
 
-  const { price, isLoading: priceLoading } = useServicePrice("PanCard");
+  const {
+    price,
+    isActive,
+    isLoading: priceLoading,
+  } = useServiceConfig("PanCard");
   const currentRate = price || 0;
 
   const [formData, setFormData] = useState({
@@ -271,6 +276,10 @@ const ApplyPanCard = () => {
       return <File size={24} />;
     }
   };
+
+  if (!isActive) {
+    return <ServiceMaintenance serviceName="PAN Card" />;
+  }
 
   if (priceLoading) return <Container>Loading current rates...</Container>;
 

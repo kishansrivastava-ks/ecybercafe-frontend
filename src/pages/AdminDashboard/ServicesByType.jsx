@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// import { Switch } from "@headlessui/react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +39,15 @@ const updateServicePrice = async ({ serviceType, newPrice }) => {
   return res.data;
 };
 
+// API call for toggling
+const toggleService = async ({ serviceType, isActive }) => {
+  const res = await axiosInstance.patch("/admin/config/toggle", {
+    serviceType,
+    isActive,
+  });
+  return res.data;
+};
+
 const ServicesByType = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -54,6 +64,15 @@ const ServicesByType = () => {
   } = useQuery({
     queryKey: ["servicePrices"],
     queryFn: fetchServicePrices,
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: toggleService,
+    onSuccess: (data) => {
+      successToast(data.message);
+      queryClient.invalidateQueries(["servicePrices"]);
+    },
+    onError: (err) => errorToast(err.response?.data?.message),
   });
 
   // Handle Edit Click
@@ -81,6 +100,7 @@ const ServicesByType = () => {
             <tr>
               <th>Service Name</th>
               <th>Current Rate</th>
+              <th>Status</th>
               <th style={{ textAlign: "right" }}>Actions</th>
             </tr>
           </thead>
@@ -117,6 +137,22 @@ const ServicesByType = () => {
                       <IndianRupee size={14} />
                       {service.price}
                     </PriceTag>
+                  </td>
+                  <td>
+                    <ToggleSwitch
+                      active={service.isActive}
+                      onClick={() =>
+                        toggleMutation.mutate({
+                          serviceType: service.serviceType,
+                          isActive: !service.isActive,
+                        })
+                      }
+                    >
+                      <div className="knob" />
+                    </ToggleSwitch>
+                    <StatusLabel active={service.isActive}>
+                      {service.isActive ? "Active" : "Disabled"}
+                    </StatusLabel>
                   </td>
                   <td>
                     <ActionGroup>
@@ -527,4 +563,36 @@ const PrimaryBtn = styled.button`
   &:disabled {
     opacity: 0.7;
   }
+`;
+
+const ToggleSwitch = styled.button`
+  width: 44px;
+  height: 24px;
+  background: ${(p) => (p.active ? "var(--color-primary)" : "#e5e7eb")};
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  vertical-align: middle;
+  margin-right: 8px;
+
+  .knob {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+    transform: ${(p) => (p.active ? "translateX(20px)" : "translateX(0)")};
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const StatusLabel = styled.span`
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: ${(p) => (p.active ? "var(--color-success)" : "#999")};
 `;

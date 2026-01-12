@@ -6,7 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
-import { useServicePrice } from "../../../hooks/useServicePrice";
+import { useServiceConfig } from "../../../hooks/useServiceConfig";
+import ServiceMaintenance from "../../../components/ServiceMaintenance";
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -53,7 +54,11 @@ const ApplyVoterCard = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const { price, isLoading: priceLoading } = useServicePrice("VoterCard");
+  const {
+    price,
+    isActive,
+    isLoading: priceLoading,
+  } = useServiceConfig("VoterCard");
   const currentRate = price || 0;
 
   // Initial state with one empty row
@@ -123,6 +128,12 @@ const ApplyVoterCard = () => {
   const handleFinalSubmit = () => {
     applyMutation.mutate(rows);
   };
+
+  if (!isActive) {
+    return <ServiceMaintenance serviceName="Voter Card" />;
+  }
+
+  if (priceLoading) return <Container>Loading current rates...</Container>;
 
   return (
     <Container

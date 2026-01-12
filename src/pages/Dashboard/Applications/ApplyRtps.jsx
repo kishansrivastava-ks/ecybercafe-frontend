@@ -6,7 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
-import { useServicePrice } from "../../../hooks/useServicePrice";
+import { useServiceConfig } from "../../../hooks/useServiceConfig";
+import ServiceMaintenance from "../../../components/ServiceMaintenance";
 
 // const COST_PER_APP = 370;
 
@@ -37,7 +38,7 @@ const ApplyRtps = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const { price, isLoading: priceLoading } = useServicePrice("Rtps");
+  const { price, isActive, isLoading: priceLoading } = useServiceConfig("Rtps");
   const currentRate = price || 0;
 
   // Initial state with one empty row
@@ -122,6 +123,10 @@ const ApplyRtps = () => {
     }
     setIsConfirmModalOpen(true);
   };
+
+  if (!isActive) {
+    return <ServiceMaintenance serviceName="RTPS" />;
+  }
 
   if (priceLoading) return <Container>Loading current rates...</Container>;
 

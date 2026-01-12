@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
 import { locationData } from "../../../data/locationData";
-import { useServicePrice } from "../../../hooks/useServicePrice";
+import { useServiceConfig } from "../../../hooks/useServiceConfig";
+import ServiceMaintenance from "../../../components/ServiceMaintenance";
 
 // const COST_PER_APP = 370;
 
@@ -15,7 +16,11 @@ const ApplyLabourCard = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const { price, isLoading: priceLoading } = useServicePrice("LabourCard");
+  const {
+    price,
+    isActive,
+    isLoading: priceLoading,
+  } = useServiceConfig("LabourCard");
   const currentRate = price || 0;
 
   // Initial state
@@ -103,6 +108,10 @@ const ApplyLabourCard = () => {
     }
     setIsConfirmModalOpen(true);
   };
+
+  if (!isActive) {
+    return <ServiceMaintenance serviceName="Labour Card" />;
+  }
 
   if (priceLoading) return <Container>Loading current rates...</Container>;
 

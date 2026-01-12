@@ -21,16 +21,18 @@ import ThemeToggle from "../utils/ThemeToggle";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import WalletBalanceBadge from "../components/WalletBalanceBadge";
+import { useServiceConfig } from "../hooks/useServiceConfig";
 
 const DashboardLayout = () => {
-  // const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const { isActive: isPanCardActive } = useServiceConfig("PanCard");
+  const { isActive: isVoterCardActive } = useServiceConfig("VoterCard");
+  const { isActive: isRtpsActive } = useServiceConfig("Rtps");
+  const { isActive: isLabourCardActive } = useServiceConfig("LabourCard");
 
   const [isPanOpen, setIsPanOpen] = useState(false);
   const [isVoterOpen, setIsVoterOpen] = useState(false);
   const [isRtpsOpen, setIsRtpsOpen] = useState(false);
   const [isLabourOpen, setIsLabourOpen] = useState(false);
-
-  // const [isItrOpen, setIsItrOpen] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
@@ -107,165 +109,165 @@ const DashboardLayout = () => {
             Wallet
           </StyledLink>
 
-          {/* <StyledLink
-            to="/dashboard/services"
-            onClick={() => isMobile && setSidebarOpen(false)}
-          >
-            <Grid size={20} />
-            Services
-          </StyledLink> */}
-
           {/* PAN Card Dropdown */}
-          <ServiceDropdown>
-            <div onClick={() => setIsPanOpen(!isPanOpen)}>
-              <CreditCard size={20} />
-              PAN Card
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isPanOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isPanOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/pan-card"
-                  onClick={() => {
-                    setIsPanOpen(false);
-                    isMobile && setSidebarOpen(false);
+          {isPanCardActive && (
+            <ServiceDropdown>
+              <div onClick={() => setIsPanOpen(!isPanOpen)}>
+                <CreditCard size={20} />
+                PAN Card
+                <ChevronDown
+                  size={16}
+                  style={{
+                    marginLeft: "auto",
+                    transform: isPanOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
                   }}
-                >
-                  Apply PAN Card
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/pan-card/list" // Update this route later
-                  onClick={() => {
-                    setIsPanOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List PAN Card
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown>
+                />
+              </div>
+              {isPanOpen && (
+                <DropdownContent>
+                  <StyledLink
+                    to="/dashboard/services/pan-card"
+                    onClick={() => {
+                      setIsPanOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    Apply PAN Card
+                  </StyledLink>
+                  <StyledLink
+                    to="/dashboard/services/pan-card/list" // Update this route later
+                    onClick={() => {
+                      setIsPanOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    List PAN Card
+                  </StyledLink>
+                </DropdownContent>
+              )}
+            </ServiceDropdown>
+          )}
 
           {/* Voter Card Dropdown */}
-          <ServiceDropdown>
-            <div onClick={() => setIsVoterOpen(!isVoterOpen)}>
-              <IdCard size={20} />
-              Voter PDF
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isVoterOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isVoterOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/voter-card"
-                  onClick={() => {
-                    setIsVoterOpen(false);
-                    isMobile && setSidebarOpen(false);
+          {isVoterCardActive && (
+            <ServiceDropdown>
+              <div onClick={() => setIsVoterOpen(!isVoterOpen)}>
+                <IdCard size={20} />
+                Voter PDF
+                <ChevronDown
+                  size={16}
+                  style={{
+                    marginLeft: "auto",
+                    transform: isVoterOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
                   }}
-                >
-                  Apply Voter PDF
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/voter-card/list"
-                  onClick={() => {
-                    setIsVoterOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List Voter PDF
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown>
+                />
+              </div>
+              {isVoterOpen && (
+                <DropdownContent>
+                  <StyledLink
+                    to="/dashboard/services/voter-card"
+                    onClick={() => {
+                      setIsVoterOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    Apply Voter PDF
+                  </StyledLink>
+                  <StyledLink
+                    to="/dashboard/services/voter-card/list"
+                    onClick={() => {
+                      setIsVoterOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    List Voter PDF
+                  </StyledLink>
+                </DropdownContent>
+              )}
+            </ServiceDropdown>
+          )}
 
           {/* RTPS Dropdown */}
-          <ServiceDropdown>
-            <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
-              <IdCard size={20} />
-              RTPS
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isRtpsOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isRtpsOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/rtps"
-                  onClick={() => {
-                    setIsRtpsOpen(false);
-                    isMobile && setSidebarOpen(false);
+          {isRtpsActive && (
+            <ServiceDropdown>
+              <div onClick={() => setIsRtpsOpen(!isRtpsOpen)}>
+                <IdCard size={20} />
+                RTPS
+                <ChevronDown
+                  size={16}
+                  style={{
+                    marginLeft: "auto",
+                    transform: isRtpsOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
                   }}
-                >
-                  Apply RTPS
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/rtps/list"
-                  onClick={() => {
-                    setIsRtpsOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List RTPS
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown>
+                />
+              </div>
+              {isRtpsOpen && (
+                <DropdownContent>
+                  <StyledLink
+                    to="/dashboard/services/rtps"
+                    onClick={() => {
+                      setIsRtpsOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    Apply RTPS
+                  </StyledLink>
+                  <StyledLink
+                    to="/dashboard/services/rtps/list"
+                    onClick={() => {
+                      setIsRtpsOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    List RTPS
+                  </StyledLink>
+                </DropdownContent>
+              )}
+            </ServiceDropdown>
+          )}
 
           {/* Labour Card Dropdown */}
-          <ServiceDropdown>
-            <div onClick={() => setIsLabourOpen(!isLabourOpen)}>
-              <IdCard size={20} />
-              Labour Card
-              <ChevronDown
-                size={16}
-                style={{
-                  marginLeft: "auto",
-                  transform: isLabourOpen ? "rotate(180deg)" : "rotate(0deg)",
-                  transition: "transform 0.3s ease",
-                }}
-              />
-            </div>
-            {isLabourOpen && (
-              <DropdownContent>
-                <StyledLink
-                  to="/dashboard/services/labour-card"
-                  onClick={() => {
-                    setIsLabourOpen(false);
-                    isMobile && setSidebarOpen(false);
+          {isLabourCardActive && (
+            <ServiceDropdown>
+              <div onClick={() => setIsLabourOpen(!isLabourOpen)}>
+                <IdCard size={20} />
+                Labour Card
+                <ChevronDown
+                  size={16}
+                  style={{
+                    marginLeft: "auto",
+                    transform: isLabourOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 0.3s ease",
                   }}
-                >
-                  Apply Labour Card
-                </StyledLink>
-                <StyledLink
-                  to="/dashboard/services/labour-card/list"
-                  onClick={() => {
-                    setIsLabourOpen(false);
-                    isMobile && setSidebarOpen(false);
-                  }}
-                >
-                  List Labour Card
-                </StyledLink>
-              </DropdownContent>
-            )}
-          </ServiceDropdown>
+                />
+              </div>
+              {isLabourOpen && (
+                <DropdownContent>
+                  <StyledLink
+                    to="/dashboard/services/labour-card"
+                    onClick={() => {
+                      setIsLabourOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    Apply Labour Card
+                  </StyledLink>
+                  <StyledLink
+                    to="/dashboard/services/labour-card/list"
+                    onClick={() => {
+                      setIsLabourOpen(false);
+                      isMobile && setSidebarOpen(false);
+                    }}
+                  >
+                    List Labour Card
+                  </StyledLink>
+                </DropdownContent>
+              )}
+            </ServiceDropdown>
+          )}
         </NavLinks>
 
         <LogoutSection>
