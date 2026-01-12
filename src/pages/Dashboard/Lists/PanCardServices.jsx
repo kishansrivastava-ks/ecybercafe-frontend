@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useState } from "react";
 import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { errorToast, successToast } from "../../../utils/ToastNotfications";
+// import { errorToast, successToast } from "../../../utils/ToastNotfications";
 import axiosInstance from "../../../api/axiosInstance";
 
 const fetchPanCardServices = async () => {
@@ -20,10 +20,7 @@ const PanCardServices = () => {
     queryFn: fetchPanCardServices,
   });
 
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
-  const [showDeleteAllConfirmation, setShowDeleteAllConfirmation] =
-    useState(false);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const [selectedStatus, setSelectedStatus] = useState("All");
 
@@ -31,66 +28,6 @@ const PanCardServices = () => {
 
   const fetchServiceDetails = async (serviceId) => {
     navigate(`/dashboard/services/pan/${serviceId}`);
-  };
-
-  const deleteServiceMutation = useMutation({
-    mutationFn: async (serviceId) => {
-      return await axiosInstance.delete(`/services/${serviceId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["panCardServices"]);
-      successToast("PanCard service deleted successfully");
-    },
-    onError: () => {
-      errorToast("Failed to delete PanCard service");
-    },
-  });
-
-  const deleteAllServicesMutation = useMutation({
-    mutationFn: async () => {
-      // Get all PanCard service IDs and delete them
-      const panCardServices = data || [];
-      const deletePromises = panCardServices.map((service) =>
-        axiosInstance.delete(`/services/${service._id}`)
-      );
-      return await Promise.all(deletePromises);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["panCardServices"]);
-      successToast("All PanCard services deleted successfully");
-    },
-    onError: () => {
-      errorToast("Failed to delete PanCard services");
-    },
-  });
-
-  const handleDeleteClick = (e, serviceId) => {
-    e.stopPropagation();
-    setDeleteConfirmation(serviceId);
-  };
-
-  const confirmDelete = () => {
-    if (deleteConfirmation) {
-      deleteServiceMutation.mutate(deleteConfirmation);
-      setDeleteConfirmation(null);
-    }
-  };
-
-  const cancelDelete = () => {
-    setDeleteConfirmation(null);
-  };
-
-  const handleDeleteAll = () => {
-    setShowDeleteAllConfirmation(true);
-  };
-
-  const confirmDeleteAll = () => {
-    deleteAllServicesMutation.mutate();
-    setShowDeleteAllConfirmation(false);
-  };
-
-  const cancelDeleteAll = () => {
-    setShowDeleteAllConfirmation(false);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,18 +104,6 @@ const PanCardServices = () => {
         </FilterGroup>
       </FiltersContainer>
 
-      <DeleteAllContainer>
-        <DeleteAllButton
-          onClick={handleDeleteAll}
-          disabled={
-            isLoading || (processedServices && processedServices.length === 0)
-          }
-        >
-          Delete All PanCard Services
-          <Trash2 size={16} />
-        </DeleteAllButton>
-      </DeleteAllContainer>
-
       {isLoading && (
         <LoadingMessage>Loading PanCard services...</LoadingMessage>
       )}
@@ -199,7 +124,6 @@ const PanCardServices = () => {
                 <TableHeaderCell>Status</TableHeaderCell>
                 <TableHeaderCell>Applied On</TableHeaderCell>
                 <TableHeaderCell>Comments</TableHeaderCell>
-                <TableHeaderCell>Actions</TableHeaderCell>
               </tr>
             </TableHeader>
             <tbody>
@@ -244,15 +168,6 @@ const PanCardServices = () => {
                       </span>
                     )}
                   </TableCell>
-                  <ActionCell>
-                    <DeleteButton
-                      onClick={(e) => handleDeleteClick(e, service._id)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Trash2 size={16} color="var(--color-error)" />
-                    </DeleteButton>
-                  </ActionCell>
                 </TableRow>
               ))}
             </tbody>
@@ -280,50 +195,6 @@ const PanCardServices = () => {
             {`>`}
           </PageButton>
         </PaginationContainer>
-      )}
-
-      {deleteConfirmation && (
-        <ConfirmationModal>
-          <ConfirmationContent>
-            <h3>Delete PanCard Service</h3>
-            <p>
-              Are you sure you want to delete this PanCard service? This action
-              cannot be undone.
-            </p>
-            <ConfirmationActions>
-              <CancelButton onClick={cancelDelete}>Cancel</CancelButton>
-              <DeleteConfirmButton
-                onClick={confirmDelete}
-                disabled={deleteServiceMutation.isLoading}
-              >
-                {deleteServiceMutation.isLoading ? "Deleting..." : "Delete"}
-              </DeleteConfirmButton>
-            </ConfirmationActions>
-          </ConfirmationContent>
-        </ConfirmationModal>
-      )}
-
-      {showDeleteAllConfirmation && (
-        <ConfirmationModal>
-          <ConfirmationContent>
-            <h3>Delete All PanCard Services</h3>
-            <p>
-              Are you sure you want to delete all your PanCard services? This
-              action cannot be undone.
-            </p>
-            <ConfirmationActions>
-              <CancelButton onClick={cancelDeleteAll}>Cancel</CancelButton>
-              <DeleteConfirmButton
-                onClick={confirmDeleteAll}
-                disabled={deleteAllServicesMutation.isLoading}
-              >
-                {deleteAllServicesMutation.isLoading
-                  ? "Deleting..."
-                  : "Delete All"}
-              </DeleteConfirmButton>
-            </ConfirmationActions>
-          </ConfirmationContent>
-        </ConfirmationModal>
       )}
     </Container>
   );
