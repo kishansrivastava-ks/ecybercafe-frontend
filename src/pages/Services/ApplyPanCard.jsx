@@ -24,14 +24,17 @@ import {
   // Toast,
   ToastNotification,
 } from "../../ui/UIComponents";
+import { useServicePrice } from "../../hooks/useServicePrice";
 
 const ApplyPanCard = () => {
   const navigate = useNavigate();
   const photoInputRef = useRef(null);
   const signatureInputRef = useRef(null);
-  // const [aadharInputRef, setAadharInputRef] = useState(null);
   const aadharInputRef = useRef(null);
   const [showToast, setShowToast] = useState(true);
+
+  const { price, isLoading: priceLoading } = useServicePrice("PanCard");
+  const currentRate = price || 0;
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -269,6 +272,8 @@ const ApplyPanCard = () => {
     }
   };
 
+  if (priceLoading) return <Container>Loading current rates...</Container>;
+
   return (
     <Container
       initial={{ opacity: 0, y: 20 }}
@@ -281,7 +286,7 @@ const ApplyPanCard = () => {
           <Title>PAN Card Application</Title>
           <Subtitle>Complete your application with accurate details</Subtitle>
 
-          <FeeBadge>Application Fee: ₹125</FeeBadge>
+          <FeeBadge>Application Fee: ₹{currentRate}</FeeBadge>
         </FormHeader>
 
         <Form onSubmit={handleSubmit}>

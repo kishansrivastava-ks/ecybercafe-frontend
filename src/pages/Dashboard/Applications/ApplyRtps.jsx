@@ -6,8 +6,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
+import { useServicePrice } from "../../../hooks/useServicePrice";
 
-const COST_PER_APP = 370;
+// const COST_PER_APP = 370;
 
 const DISTRICT_DATA = {
   Aurangabad: {
@@ -35,6 +36,9 @@ const DISTRICT_DATA = {
 const ApplyRtps = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const { price, isLoading: priceLoading } = useServicePrice("Rtps");
+  const currentRate = price || 0;
 
   // Initial state with one empty row
   const [rows, setRows] = useState([
@@ -80,7 +84,7 @@ const ApplyRtps = () => {
     );
   };
 
-  const totalCost = rows.length * COST_PER_APP;
+  const totalCost = rows.length * currentRate;
 
   // --- API Mutation ---
   const applyMutation = useMutation({
@@ -119,6 +123,8 @@ const ApplyRtps = () => {
     setIsConfirmModalOpen(true);
   };
 
+  if (priceLoading) return <Container>Loading current rates...</Container>;
+
   return (
     <Container initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <Header>
@@ -127,7 +133,7 @@ const ApplyRtps = () => {
           <Subtitle>Bulk application for RTPS services</Subtitle>
         </div>
         <RateBadge>
-          Rate: <strong>₹{COST_PER_APP}</strong> / Application
+          Rate: <strong>₹{currentRate}</strong> / Application
         </RateBadge>
       </Header>
 

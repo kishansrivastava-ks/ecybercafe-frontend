@@ -7,12 +7,16 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
 import { locationData } from "../../../data/locationData";
+import { useServicePrice } from "../../../hooks/useServicePrice";
 
-const COST_PER_APP = 370;
+// const COST_PER_APP = 370;
 
 const ApplyLabourCard = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const { price, isLoading: priceLoading } = useServicePrice("LabourCard");
+  const currentRate = price || 0;
 
   // Initial state
   const [rows, setRows] = useState([
@@ -63,7 +67,7 @@ const ApplyLabourCard = () => {
     );
   };
 
-  const totalCost = rows.length * COST_PER_APP;
+  const totalCost = rows.length * currentRate;
 
   // --- API Mutation ---
   const applyMutation = useMutation({
@@ -100,6 +104,8 @@ const ApplyLabourCard = () => {
     setIsConfirmModalOpen(true);
   };
 
+  if (priceLoading) return <Container>Loading current rates...</Container>;
+
   return (
     <Container initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <Header>
@@ -108,7 +114,7 @@ const ApplyLabourCard = () => {
           <Subtitle>Bulk application for Labour Card services</Subtitle>
         </div>
         <RateBadge>
-          Rate: <strong>₹{COST_PER_APP}</strong> / Application
+          Rate: <strong>₹{currentRate}</strong> / Application
         </RateBadge>
       </Header>
 

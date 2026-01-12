@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { successToast, errorToast } from "../../../utils/ToastNotfications";
+import { useServicePrice } from "../../../hooks/useServicePrice";
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -46,11 +47,14 @@ const INDIAN_STATES = [
   "Puducherry",
 ];
 
-const COST_PER_APP = 30;
+// const COST_PER_APP = 30;
 
 const ApplyVoterCard = () => {
   const navigate = useNavigate();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  const { price, isLoading: priceLoading } = useServicePrice("VoterCard");
+  const currentRate = price || 0;
 
   // Initial state with one empty row
   const [rows, setRows] = useState([
@@ -80,7 +84,7 @@ const ApplyVoterCard = () => {
     );
   };
 
-  const totalCost = rows.length * COST_PER_APP;
+  const totalCost = rows.length * currentRate;
 
   // --- API Mutation ---
   const applyMutation = useMutation({
@@ -132,7 +136,7 @@ const ApplyVoterCard = () => {
           <Subtitle>Bulk application for Voter Card PDF generation</Subtitle>
         </div>
         <RateBadge>
-          Rate: <strong>₹{COST_PER_APP}</strong> / Application
+          Rate: <strong>₹{currentRate}</strong> / Application
         </RateBadge>
       </Header>
 
