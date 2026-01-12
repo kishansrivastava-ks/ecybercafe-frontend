@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Search,
   MapPin,
@@ -13,11 +13,8 @@ import {
   Filter,
   RefreshCw,
   X,
-  Trash2,
-  AlertTriangle,
 } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
-import { successToast, errorToast } from "../../utils/ToastNotfications";
 
 // --- Location Data for Filtering ---
 const locationData = {
@@ -622,21 +619,13 @@ const locationData = {
   ],
 };
 
-// --- Fetch Users ---
+// --- Data Fetching Function ---
 const fetchAllUsers = async () => {
   const { data } = await axiosInstance.get("/admin/users/all-users");
   return data.users;
 };
 
-// Delete API Call
-const deleteUserApi = async (userId) => {
-  const res = await axiosInstance.delete(`/admin/users/${userId}`);
-  return res.data;
-};
-
 const Users = () => {
-  const queryClient = useQueryClient();
-
   // --- States ---
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJila, setSelectedJila] = useState("All");
@@ -655,26 +644,8 @@ const Users = () => {
     queryFn: fetchAllUsers,
   });
 
-  const [userToDelete, setUserToDelete] = useState(null);
-
-  // Delete Mutation
-  const deleteMutation = useMutation({
-    mutationFn: deleteUserApi,
-    onSuccess: () => {
-      successToast("User deactivated successfully");
-      queryClient.invalidateQueries(["allUsers"]);
-      setUserToDelete(null);
-    },
-    onError: (err) => {
-      errorToast(err.response?.data?.message || "Failed to delete user");
-    },
-  });
-
   // --- Filtering Logic ---
   const filteredUsers = users.filter((user) => {
-    // 0. Exclude Deleted Users (New Check)
-    if (user.isDeleted) return false;
-
     // 1. Search Filter (Name or Email)
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -689,6 +660,7 @@ const Users = () => {
 
     return matchesSearch && matchesJila && matchesPrakhand;
   });
+
   // --- Pagination Logic ---
   const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
   const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
@@ -813,7 +785,6 @@ const Users = () => {
                   <th>Location (Jila / Prakhand)</th>
                   <th>Status</th>
                   <th>Joined On</th>
-                  <th style={{ textAlign: "right" }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -826,6 +797,9 @@ const Users = () => {
                   >
                     <td>
                       <UserInfo>
+                        {/* <UserAvatar>
+                          {user.name.charAt(0).toUpperCase()}
+                        </UserAvatar> */}
                         <UserName>{user.name}</UserName>
                       </UserInfo>
                     </td>
@@ -852,16 +826,6 @@ const Users = () => {
                         <Calendar size={14} />
                         {new Date(user.createdAt).toLocaleDateString()}
                       </DateInfo>
-                    </td>
-                    <td style={{ textAlign: "right" }}>
-                      {user.role !== "admin" && (
-                        <DeleteBtn
-                          onClick={() => setUserToDelete(user)}
-                          title="Deactivate User"
-                        >
-                          <Trash2 size={16} />
-                        </DeleteBtn>
-                      )}
                     </td>
                   </TableRow>
                 ))}
@@ -891,56 +855,6 @@ const Users = () => {
           )}
         </>
       )}
-
-      {/* Confirmation Modal */}
-      <AnimatePresence>
-        {userToDelete && (
-          <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Modal
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-            >
-              <ModalHeader>
-                <h3>Confirm User Deactivation</h3>
-                <CloseBtn onClick={() => setUserToDelete(null)}>
-                  <X size={20} />
-                </CloseBtn>
-              </ModalHeader>
-              <ModalBody>
-                <WarningIcon>
-                  <AlertTriangle size={48} />
-                </WarningIcon>
-                <ConfirmText>
-                  Are you sure you want to deactivate{" "}
-                  <strong>{userToDelete.name}</strong>?
-                </ConfirmText>
-                <SubText>
-                  They will no longer be able to log in. Their transaction
-                  history and service applications will be preserved.
-                </SubText>
-              </ModalBody>
-              <ModalFooter>
-                <CancelBtn onClick={() => setUserToDelete(null)}>
-                  Cancel
-                </CancelBtn>
-                <ConfirmBtn
-                  onClick={() => deleteMutation.mutate(userToDelete._id)}
-                  disabled={deleteMutation.isLoading}
-                >
-                  {deleteMutation.isLoading
-                    ? "Processing..."
-                    : "Yes, Deactivate"}
-                </ConfirmBtn>
-              </ModalFooter>
-            </Modal>
-          </Overlay>
-        )}
-      </AnimatePresence>
     </Container>
   );
 };
@@ -1303,101 +1217,5 @@ const ErrorState = styled(EmptyState)`
     &:hover {
       background-color: var(--color-border-light);
     }
-  }
-`;
-
-const DeleteBtn = styled.div`
-  background: #fee2e2;
-  color: #ef4444;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 2rem;
-  &:hover {
-    background: #fecaca;
-  }
-`;
-
-/* Modal Styles */
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Modal = styled(motion.div)`
-  background: white;
-  width: 400px;
-  border-radius: 12px;
-  overflow: hidden;
-`;
-const ModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-  h3 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-`;
-const CloseBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-`;
-const ModalBody = styled.div`
-  padding: 2rem;
-  text-align: center;
-`;
-const WarningIcon = styled.div`
-  color: #ef4444;
-  margin-bottom: 1rem;
-`;
-const ConfirmText = styled.p`
-  font-size: 1.1rem;
-  margin: 0 0 0.5rem 0;
-  color: #333;
-`;
-const SubText = styled.p`
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0;
-`;
-const ModalFooter = styled.div`
-  padding: 1rem;
-  background: #f9f9f9;
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.8rem;
-`;
-const CancelBtn = styled.button`
-  padding: 0.6rem 1.2rem;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  color: black;
-`;
-const ConfirmBtn = styled.button`
-  padding: 0.6rem 1.2rem;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  &:disabled {
-    opacity: 0.7;
   }
 `;
