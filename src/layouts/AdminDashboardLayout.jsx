@@ -10,6 +10,7 @@ import {
   X,
   LogOut,
   TrendingUp,
+  Banknote,
 } from "lucide-react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -104,6 +105,14 @@ const AdminDashboardLayout = () => {
           >
             <TrendingUp size={20} />
             <span>Financial Overview</span>
+          </NavItem>
+
+          <NavItem
+            to="/admin-dashboard/transactions"
+            onClick={closeSidebarOnMobile}
+          >
+            <Banknote size={20} />
+            <span>Transactions</span>
           </NavItem>
         </Navigation>
 

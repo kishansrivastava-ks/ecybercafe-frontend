@@ -17,8 +17,6 @@ import NotFoundPage from "../pages/NotFoundPage";
 import ServiceDetailsRtps from "../pages/Dashboard/ServiceDetailsRtps";
 import ServiceDetailsJobCard from "../pages/Dashboard/ServiceDetailsJobCard";
 import ASDPan from "../pages/AdminDashboard/ASDPan";
-import ASDRtps from "../pages/AdminDashboard/ASDRtps";
-import ASDJobCard from "../pages/AdminDashboard/ASDJobCard";
 
 import ServicesByType from "../pages/AdminDashboard/ServicesByType";
 import ServicesPan from "../pages/AdminDashboard/ServicesPan";
@@ -34,7 +32,6 @@ import PhotoPaper from "../pages/Products/PhotoPaper";
 import LaminatePouch from "../pages/Products/LaminatePouch";
 import LaminatedAadhar from "../pages/Products/LaminatedAadhar";
 import PanCardServices from "../pages/Dashboard/Lists/PanCardServices";
-import ASDITR from "../pages/AdminDashboard/ASDITR";
 import ApplyITR from "../pages/Services/ApplyITR";
 import ServiceDetailsITR from "../pages/Dashboard/ServiceDetailsITR";
 import Users from "../pages/AdminDashboard/Users";
@@ -53,6 +50,7 @@ import RtpsList from "../pages/Dashboard/Lists/RtpsList";
 import ApplyLabourCard from "../pages/Dashboard/Applications/ApplyLabourCard";
 import LabourCardList from "../pages/Dashboard/Lists/LabourCardList";
 import AdminLabourServices from "../pages/AdminDashboard/AdminLabourServices";
+import AdminTransactions from "../pages/AdminDashboard/AdminTransactions";
 
 const AppRoutes = () => {
   return (
@@ -141,9 +139,6 @@ const AppRoutes = () => {
             {/* <Route index element={<AdminServices />} /> */}
             <Route path="services" element={<ServicesByType />} />
             <Route path="service/pan/:id" element={<ASDPan />} />
-            <Route path="service/rtps/:id" element={<ASDRtps />} />
-            <Route path="service/job-card/:id" element={<ASDJobCard />} />
-            <Route path="service/itr/:id" element={<ASDITR />} />
             <Route path="services/pan" element={<ServicesPan />} />
             <Route path="services/job-card" element={<ServicesJobCard />} />
             <Route path="services/rtps" element={<AdminRtpsServices />} />
@@ -156,7 +151,7 @@ const AppRoutes = () => {
               element={<AdminVoterServices />}
             />
             <Route path="users" element={<Users />} />
-
+            <Route path="transactions" element={<AdminTransactions />} />
             <Route path="wallet-status" element={<AdminWalletDashboard />} />
           </Route>
         </Route>

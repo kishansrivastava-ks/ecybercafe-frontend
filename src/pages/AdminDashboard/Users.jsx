@@ -15,9 +15,11 @@ import {
   X,
   Trash2,
   AlertTriangle,
+  IndianRupee,
 } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
 import { successToast, errorToast } from "../../utils/ToastNotfications";
+import CreditWalletModal from "../../components/modals/CreditWalletModal";
 
 // --- Location Data for Filtering ---
 const locationData = {
@@ -642,6 +644,7 @@ const Users = () => {
   const [selectedJila, setSelectedJila] = useState("All");
   const [selectedPrakhand, setSelectedPrakhand] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [creditModalUser, setCreditModalUser] = useState(null);
   const ITEMS_PER_PAGE = 10;
 
   // --- Query ---
@@ -854,14 +857,28 @@ const Users = () => {
                       </DateInfo>
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      {user.role !== "admin" && (
-                        <DeleteBtn
-                          onClick={() => setUserToDelete(user)}
-                          title="Deactivate User"
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <CreditBtn
+                          onClick={() => setCreditModalUser(user)}
+                          title="Add Funds Manually"
                         >
-                          <Trash2 size={16} />
-                        </DeleteBtn>
-                      )}
+                          <IndianRupee size={16} />
+                        </CreditBtn>
+                        {user.role !== "admin" && (
+                          <DeleteBtn
+                            onClick={() => setUserToDelete(user)}
+                            title="Deactivate User"
+                          >
+                            <Trash2 size={16} />
+                          </DeleteBtn>
+                        )}
+                      </div>
                     </td>
                   </TableRow>
                 ))}
@@ -939,6 +956,20 @@ const Users = () => {
               </ModalFooter>
             </Modal>
           </Overlay>
+        )}
+      </AnimatePresence>
+
+      {/* Credit Wallet Modal */}
+      <AnimatePresence>
+        {creditModalUser && (
+          <CreditWalletModal
+            user={creditModalUser}
+            onClose={() => setCreditModalUser(null)}
+            onSuccess={() => {
+              setCreditModalUser(null);
+              queryClient.invalidateQueries(["allUsers"]);
+            }}
+          />
         )}
       </AnimatePresence>
     </Container>
@@ -1399,5 +1430,23 @@ const ConfirmBtn = styled.button`
   cursor: pointer;
   &:disabled {
     opacity: 0.7;
+  }
+`;
+
+const CreditBtn = styled.div`
+  background: #dcfce7;
+  color: #166534;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #bbf7d0;
   }
 `;
