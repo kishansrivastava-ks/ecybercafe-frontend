@@ -16,6 +16,8 @@ import {
   Trash2,
   AlertTriangle,
   IndianRupee,
+  UserCheck,
+  CheckCircle,
 } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
 import { successToast, errorToast } from "../../utils/ToastNotfications";
@@ -636,6 +638,12 @@ const deleteUserApi = async (userId) => {
   return res.data;
 };
 
+// Activate API Call
+const activateUserApi = async (userId) => {
+  const res = await axiosInstance.patch(`/admin/users/${userId}/activate`);
+  return res.data;
+};
+
 const Users = () => {
   const queryClient = useQueryClient();
 
@@ -646,6 +654,9 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [creditModalUser, setCreditModalUser] = useState(null);
   const ITEMS_PER_PAGE = 10;
+
+  const [showDeactivated, setShowDeactivated] = useState(false); // Toggle view
+  const [userToActivate, setUserToActivate] = useState(null); // Modal state
 
   // --- Query ---
   const {
@@ -673,10 +684,30 @@ const Users = () => {
     },
   });
 
+  // Activate Mutation
+  const activateMutation = useMutation({
+    mutationFn: activateUserApi,
+    onSuccess: () => {
+      successToast("User reactivated successfully");
+      queryClient.invalidateQueries(["allUsers"]);
+      setUserToActivate(null);
+    },
+    onError: (err) => {
+      errorToast(err.response?.data?.message || "Failed to activate user");
+    },
+  });
+
   // --- Filtering Logic ---
   const filteredUsers = users.filter((user) => {
     // 0. Exclude Deleted Users (New Check)
-    if (user.isDeleted) return false;
+    // if (user.isDeleted) return false;
+
+    // 0. Filter based on Active/Deactivated view
+    if (showDeactivated) {
+      if (!user.isDeleted) return false; // In Deactivated view, hide active users
+    } else {
+      if (user.isDeleted) return false; // In Active view, hide deleted users
+    }
 
     // 1. Search Filter (Name or Email)
     const matchesSearch =
@@ -730,10 +761,30 @@ const Users = () => {
     >
       <HeaderContainer>
         <div>
-          <Title>Registered Users</Title>
-          <Subtitle>Manage and view all platform users</Subtitle>
+          {/* <Title>Registered Users</Title>
+          <Subtitle>Manage and view all platform users</Subtitle> */}
+          <Title>
+            {showDeactivated ? "Deactivated Users" : "Registered Users"}
+          </Title>
+          <Subtitle>
+            {showDeactivated
+              ? "Manage banned accounts"
+              : "Manage and view all platform users"}
+          </Subtitle>
         </div>
-        <UserCount>{filteredUsers.length} Users Found</UserCount>
+        {/* <UserCount>{filteredUsers.length} Users Found</UserCount> */}
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          {/* New Toggle Button */}
+          <ToggleViewBtn
+            onClick={() => {
+              setShowDeactivated(!showDeactivated);
+              setCurrentPage(1); // Reset page on toggle
+            }}
+          >
+            {showDeactivated ? "Show Active Users" : "Show Deactivated Users"}
+          </ToggleViewBtn>
+          <UserCount>{filteredUsers.length} Users Found</UserCount>
+        </div>
       </HeaderContainer>
 
       {/* --- Controls Section: Search & Filters --- */}
@@ -856,7 +907,7 @@ const Users = () => {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </DateInfo>
                     </td>
-                    <td style={{ textAlign: "right" }}>
+                    {/* <td style={{ textAlign: "right" }}>
                       <div
                         style={{
                           display: "flex",
@@ -877,6 +928,46 @@ const Users = () => {
                           >
                             <Trash2 size={16} />
                           </DeleteBtn>
+                        )}
+                      </div>
+                    </td> */}
+                    <td style={{ textAlign: "right" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        {/* Logic for Active Users */}
+                        {!user.isDeleted && (
+                          <>
+                            <CreditBtn
+                              onClick={() => setCreditModalUser(user)}
+                              title="Add Funds Manually"
+                            >
+                              <IndianRupee size={16} />
+                            </CreditBtn>
+
+                            {user.role !== "admin" && (
+                              <DeleteBtn
+                                onClick={() => setUserToDelete(user)}
+                                title="Deactivate User"
+                              >
+                                <Trash2 size={16} />
+                              </DeleteBtn>
+                            )}
+                          </>
+                        )}
+
+                        {/* Logic for Deactivated Users (New) */}
+                        {user.isDeleted && (
+                          <ActivateBtn
+                            onClick={() => setUserToActivate(user)}
+                            title="Reactivate User"
+                          >
+                            <UserCheck size={16} />
+                          </ActivateBtn>
                         )}
                       </div>
                     </td>
@@ -953,6 +1044,60 @@ const Users = () => {
                     ? "Processing..."
                     : "Yes, Deactivate"}
                 </ConfirmBtn>
+              </ModalFooter>
+            </Modal>
+          </Overlay>
+        )}
+      </AnimatePresence>
+
+      {/* Reactivation Modal */}
+      <AnimatePresence>
+        {userToActivate && (
+          <Overlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Modal
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <ModalHeader>
+                <h3>Confirm User Reactivation</h3>
+                <CloseBtn onClick={() => setUserToActivate(null)}>
+                  <X size={20} />
+                </CloseBtn>
+              </ModalHeader>
+              <ModalBody>
+                <div
+                  style={{
+                    color: "var(--color-success)",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <CheckCircle size={48} />
+                </div>
+                <ConfirmText>
+                  Are you sure you want to reactivate{" "}
+                  <strong>{userToActivate.name}</strong>?
+                </ConfirmText>
+                <SubText>
+                  The user will regain access to their account immediately.
+                </SubText>
+              </ModalBody>
+              <ModalFooter>
+                <CancelBtn onClick={() => setUserToActivate(null)}>
+                  Cancel
+                </CancelBtn>
+                <ActivateConfirmBtn
+                  onClick={() => activateMutation.mutate(userToActivate._id)}
+                  disabled={activateMutation.isLoading}
+                >
+                  {activateMutation.isLoading
+                    ? "Processing..."
+                    : "Yes, Reactivate"}
+                </ActivateConfirmBtn>
               </ModalFooter>
             </Modal>
           </Overlay>
@@ -1105,7 +1250,7 @@ const Select = styled.select`
   }
 `;
 
-const ResetButton = styled.button`
+const ResetButton = styled.div`
   background: var(--color-surface-secondary);
   border: 1px solid var(--color-border-light);
   color: var(--color-text-secondary);
@@ -1448,5 +1593,47 @@ const CreditBtn = styled.div`
 
   &:hover {
     background: #bbf7d0;
+  }
+`;
+const ToggleViewBtn = styled.button`
+  background: white;
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: black;
+  &:hover {
+    background: #f9f9f9;
+  }
+`;
+
+const ActivateBtn = styled.div`
+  background: #dcfce7;
+  color: #166534;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  &:hover {
+    background: #bbf7d0;
+  }
+`;
+
+const ActivateConfirmBtn = styled.button`
+  padding: 0.6rem 1.2rem;
+  background: var(--color-success, #10b981); /* Use your theme success color */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.7;
   }
 `;

@@ -231,7 +231,9 @@ const UserServices = () => {
                   <TableCell>
                     <ServiceType>{service.serviceType}</ServiceType>
                   </TableCell>
-                  <TableCell>{service.specificService.fullName}</TableCell>
+                  <TableCell>
+                    {service.specificService?.fullName || "N/A"}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={service.status}>
                       {service.status}
@@ -240,7 +242,7 @@ const UserServices = () => {
                   <TableCell>
                     {format(
                       new Date(service.createdAt),
-                      "dd MMM yyyy, HH:mm a"
+                      "dd MMM yyyy, HH:mm a",
                     )}
                   </TableCell>
                   <TableCell>
@@ -473,10 +475,10 @@ const StatusBadge = styled.span`
     props.status === "completed"
       ? "var(--color-success)"
       : props.status === "pending"
-      ? "var(--color-warning)"
-      : props.status === "in_progress"
-      ? "var(--color-primary)"
-      : "var(--color-primary)"};
+        ? "var(--color-warning)"
+        : props.status === "in_progress"
+          ? "var(--color-primary)"
+          : "var(--color-primary)"};
   color: white;
 `;
 

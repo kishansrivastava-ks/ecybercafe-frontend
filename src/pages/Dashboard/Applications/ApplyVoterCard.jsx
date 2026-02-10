@@ -85,7 +85,7 @@ const ApplyVoterCard = () => {
 
   const handleInputChange = (id, field, value) => {
     setRows(
-      rows.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+      rows.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
     );
   };
 
@@ -107,7 +107,7 @@ const ApplyVoterCard = () => {
     },
     onError: (err) => {
       errorToast(
-        err.response?.data?.message || "Failed to submit applications"
+        err.response?.data?.message || "Failed to submit applications",
       );
       setIsConfirmModalOpen(false);
     },
@@ -155,7 +155,7 @@ const ApplyVoterCard = () => {
         <FormHeader>
           <ColHeader style={{ flex: 1.5 }}>State</ColHeader>
           <ColHeader style={{ flex: 2 }}>Full Name</ColHeader>
-          <ColHeader style={{ flex: 2 }}>Reference Number</ColHeader>
+          <ColHeader style={{ flex: 2 }}>EPIC Number</ColHeader>
           <ColHeader style={{ width: "50px", textAlign: "center" }}>
             Action
           </ColHeader>
@@ -200,7 +200,7 @@ const ApplyVoterCard = () => {
 
                 <Input
                   type="text"
-                  placeholder="Reference No."
+                  placeholder="EPIC No."
                   value={row.referenceNumber}
                   onChange={(e) =>
                     handleInputChange(row.id, "referenceNumber", e.target.value)

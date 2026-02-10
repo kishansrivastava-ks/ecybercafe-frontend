@@ -47,33 +47,38 @@ const AdminVoterServices = () => {
   const filteredData = useMemo(() => {
     if (!services) return [];
 
-    return services.filter((service) => {
-      // 1. Search Filter (Applicant, Ref No, Retailer Name, Retailer Email)
-      const term = searchTerm.toLowerCase();
-      const specific = service.specificService || {};
-      const user = service.user || {};
+    return (
+      services
+        .filter((service) => {
+          // 1. Search Filter (Applicant, Ref No, Retailer Name, Retailer Email)
+          const term = searchTerm.toLowerCase();
+          const specific = service.specificService || {};
+          const user = service.user || {};
 
-      const matchesSearch =
-        (specific.name?.toLowerCase() || "").includes(term) ||
-        (specific.referenceNumber?.toLowerCase() || "").includes(term) ||
-        (user.name?.toLowerCase() || "").includes(term) ||
-        (user.email?.toLowerCase() || "").includes(term);
+          const matchesSearch =
+            (specific.name?.toLowerCase() || "").includes(term) ||
+            (specific.referenceNumber?.toLowerCase() || "").includes(term) ||
+            (user.name?.toLowerCase() || "").includes(term) ||
+            (user.email?.toLowerCase() || "").includes(term);
 
-      // 2. Status Filter
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "completed" && service.status === "completed") ||
-        (statusFilter === "pending" && service.status !== "completed");
+          // 2. Status Filter
+          const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "completed" && service.status === "completed") ||
+            (statusFilter === "pending" && service.status !== "completed");
 
-      return matchesSearch && matchesStatus;
-    });
+          return matchesSearch && matchesStatus;
+        })
+        // sort by newest first
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    ); // Newest first
   }, [services, searchTerm, statusFilter]);
 
   // --- Pagination Logic ---
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const currentData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   // --- Handlers ---
@@ -86,7 +91,7 @@ const AdminVoterServices = () => {
     try {
       const response = await axiosInstance.get(
         `/services/${serviceId}/voter/download`,
-        { responseType: "blob" }
+        { responseType: "blob" },
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -152,7 +157,7 @@ const AdminVoterServices = () => {
               <th>Retailer Details</th>
               <th>Applicant Info</th>
               <th>State</th>
-              <th>Reference No</th>
+              <th>EPIC No</th>
               <th>Status</th>
               <th style={{ textAlign: "right" }}>Action</th>
             </tr>
@@ -260,7 +265,8 @@ const AdminVoterServices = () => {
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            <ChevronLeft size={20} />
+            {/* <ChevronLeft size={20} /> */}
+            {`<`}
           </PageBtn>
           <span>
             Page {currentPage} of {totalPages}
@@ -269,7 +275,8 @@ const AdminVoterServices = () => {
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
-            <ChevronRight size={20} />
+            {/* <ChevronRight size={20} /> */}
+            {`>`}
           </PageBtn>
         </Pagination>
       )}
@@ -534,12 +541,13 @@ const Pagination = styled.div`
 const PageBtn = styled.button`
   width: 36px;
   height: 36px;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   border: 1px solid #ddd;
   background: white;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: black;
   cursor: pointer;
   &:disabled {
     opacity: 0.5;
