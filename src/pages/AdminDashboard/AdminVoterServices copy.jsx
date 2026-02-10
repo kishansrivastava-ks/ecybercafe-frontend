@@ -13,12 +13,9 @@ import {
   ChevronRight,
   Download,
   Eye,
-  XCircle,
-  AlertTriangle,
 } from "lucide-react";
 import axiosInstance from "../../api/axiosInstance";
-import VoterDocUploadModal from "./VoterDocUploadModal";
-import VoterRejectModal from "./VoterRejectModal";
+import VoterDocUploadModal from "./VoterDocUploadModal"; // Creating this next
 
 // Fetch Voter Services
 const fetchVoterServices = async () => {
@@ -36,8 +33,6 @@ const AdminVoterServices = () => {
   // State for Upload Modal
   const [selectedService, setSelectedService] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [serviceToReject, setServiceToReject] = useState(null);
 
   const {
     data: services,
@@ -226,29 +221,12 @@ const AdminVoterServices = () => {
                         <>
                           <CheckCircle size={12} /> Completed
                         </>
-                      ) : service.status === "rejected" ? ( // NEW: Handle Rejected
-                        <>
-                          <XCircle size={12} /> Rejected
-                        </>
                       ) : (
                         <>
                           <Clock size={12} /> Pending
                         </>
                       )}
                     </StatusBadge>
-                    {/* NEW: Show rejection remark if it exists */}
-                    {service.specificService?.statusRemark && (
-                      <div
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "#ef4444",
-                          marginTop: "4px",
-                          fontStyle: "italic",
-                        }}
-                      >
-                        "{service.specificService.statusRemark}"
-                      </div>
-                    )}
                   </td>
                   <td>
                     <ActionCell>
@@ -263,29 +241,15 @@ const AdminVoterServices = () => {
                       )}
 
                       {/* Upload/Replace Button */}
-                      {service.status === "rejected" ? (
-                        <div style={{ color: "red" }}>Rejected</div>
-                      ) : (
-                        <UploadButton
-                          onClick={() => handleOpenUpload(service)}
-                          isCompleted={service.status === "completed"}
-                        >
-                          <Upload size={14} />
-                          {service.status === "completed"
-                            ? "Replace PDF"
-                            : "Upload PDF"}
-                        </UploadButton>
-                      )}
-
-                      {/* Reject Button */}
-                      {service.status === "pending" && (
-                        <RejectButton
-                          onClick={() => setServiceToReject(service)}
-                          title="Reject Application"
-                        >
-                          <XCircle size={14} /> Reject
-                        </RejectButton>
-                      )}
+                      <UploadButton
+                        onClick={() => handleOpenUpload(service)}
+                        isCompleted={service.status === "completed"}
+                      >
+                        <Upload size={14} />
+                        {service.status === "completed"
+                          ? "Replace PDF"
+                          : "Upload PDF"}
+                      </UploadButton>
                     </ActionCell>
                   </td>
                 </tr>
@@ -318,7 +282,7 @@ const AdminVoterServices = () => {
         </Pagination>
       )}
 
-      {/* --- Upload Doc Modal --- */}
+      {/* --- Upload Modal --- */}
       {isModalOpen && (
         <VoterDocUploadModal
           service={selectedService}
@@ -326,18 +290,6 @@ const AdminVoterServices = () => {
           onSuccess={() => {
             setIsModalOpen(false);
             refetch(); // Refresh table data after upload
-          }}
-        />
-      )}
-
-      {/* Rejection Modal */}
-      {serviceToReject && (
-        <VoterRejectModal
-          service={serviceToReject}
-          onClose={() => setServiceToReject(null)}
-          onSuccess={() => {
-            setServiceToReject(null);
-            refetch(); // Refresh data to show updated status/balance
           }}
         />
       )}
@@ -531,20 +483,10 @@ const StatusBadge = styled.span`
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-
-  background: ${(p) =>
+  ${(p) =>
     p.status === "completed"
-      ? "#dcfce7"
-      : p.status === "rejected"
-        ? "#fee2e2" // Red for rejected
-        : "#f3f4f6"};
-
-  color: ${(p) =>
-    p.status === "completed"
-      ? "#166534"
-      : p.status === "rejected"
-        ? "#991b1b" // Dark red text
-        : "#374151"};
+      ? `background: #dcfce7; color: #166534;`
+      : `background: #fff7ed; color: #c2410c;`}
 `;
 
 const ActionCell = styled.div`
@@ -613,24 +555,5 @@ const PageBtn = styled.button`
   }
   &:hover:not(:disabled) {
     background: #f9f9f9;
-  }
-`;
-const RejectButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #fef2f2;
-  color: #ef4444;
-  border: 1px solid #fee2e2;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #fee2e2;
-    border-color: #fecaca;
   }
 `;
